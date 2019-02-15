@@ -1,0 +1,4 @@
+#!/usr/local/bin/node
+
+const greet = require('./build/Release/greet.node');
+console.log(greet.hello());
