@@ -1,12 +1,21 @@
 #include "greet.h"
 #include <napi.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+using namespace std;
 
 /**
  *
  */
 std::string Greet::hello()
 {
-    return "Hello..";
+    int number1 = 1000;
+    int number2 = 3333;
+
+    string message = std::to_string(number1 - number2);
+
+    return message;
 }
 
 /**

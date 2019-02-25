@@ -1,4 +1,4 @@
-#!/usr/local/bin/node
+#!./node_modules/.bin/ts-node
 
 const greet = require('./build/Release/greet.node');
 console.log(greet.hello());
