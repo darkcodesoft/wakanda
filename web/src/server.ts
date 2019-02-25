@@ -30,15 +30,23 @@ class Server {
      * @type {number[]}
      * @memberof Server
      */
-    private ports: number[] = [];
+    private ports: number[] = []
 
     /**
      *
-     * @private
+     *
      * @type {express.Application}
      * @memberof Server
      */
     public readonly process: express.Application
+
+    /**
+     *
+     *
+     * @type {express.Router}
+     * @memberof Server
+     */
+    public readonly router: express.Router
 
     /**
      * Get server static instance
@@ -63,6 +71,7 @@ class Server {
      */
     constructor() {
         this.process = express()
+        this.router = express.Router()
 
         let port:number;
         if(!!process.env.PORT) {
@@ -118,20 +127,6 @@ class Server {
         const max = 65535
         var num = +port;
         return num >= min && num <= max && port === num;
-    }
-
-    /**
-     * Add route
-     *
-     * @param {string} path
-     * @param {Function} callback
-     * @memberof Server
-     */
-    public route(path:string, callback:Function): void {
-        this.process.get(path, (req: express.Request, res: express.Response) => {
-            const data = callback()
-            res.send(data)
-        })
     }
 
     /**
