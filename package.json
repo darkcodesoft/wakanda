@@ -8,7 +8,23 @@
     "server": "ts-node ./web/start --port=7777",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "test": "mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'web/**/*.test.ts'"
+    "test": "nyc mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'web/**/*.test.ts'"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html",
+      "json"
+    ],
+    "all": true,
+    "temp-dir": "./.coverage/tmp",
+    "report-dir": "./.coverage"
   },
   "author": "storm2910@icloud.com",
   "license": "ISC",
@@ -20,6 +36,7 @@
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "node-gyp": "^3.8.0",
+    "nyc": "^13.3.0",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.3"
   },
