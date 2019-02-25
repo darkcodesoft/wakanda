@@ -1,6 +1,6 @@
 #!./node_modules/.bin/ts-node
 
-const Server = require('./src/server')
+const Server = require('./server')
 const instance = Server.default.static()
 const args = require('minimist')(process.argv.slice(2))
 const greeter = require('../build/Release/greet.node')
