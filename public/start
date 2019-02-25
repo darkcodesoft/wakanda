@@ -11,11 +11,11 @@ if(!!args.port) {
     instance.setPort(port)
 }
 
-instance.process.get('/', (req, res) => {
+instance.router.get('/', (req, res) => {
     let message = greeter.hello()
     message += ' by Teddy Moussignac'
 
-    res.send(message)
+    res.status(200).send({ 'messsage': message })
 })
 
 instance.start()

@@ -72,6 +72,7 @@ class Server {
     constructor() {
         this.process = express()
         this.router = express.Router()
+        this.process.use(this.router)
 
         let port:number;
         if(!!process.env.PORT) {
