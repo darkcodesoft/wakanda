@@ -2,7 +2,6 @@
 
 const Server = require('./src/server')
 const instance = Server.default.static()
-const Express = require('express')
 const args = require('minimist')(process.argv.slice(2));
 const greeter = require('../build/Release/greet.node');
 
