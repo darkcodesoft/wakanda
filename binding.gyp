@@ -4,8 +4,8 @@
         "cflags!": ["-fno-exceptions"],
         "cflags_cc!": ["-fno-exceptions"],
         "sources": [
-            "src++/greet/*.cc",
-            "src++/greet/src/*.cc"
+            "addons/greet/*.cc",
+            "addons/greet/src/*.cc"
         ],
         "include_dirs" : [
             "<!@(node -p \"require('node-addon-api').include\")"

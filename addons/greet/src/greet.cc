@@ -14,6 +14,7 @@ std::string Greet::hello()
     int number2 = 3333;
 
     string message = std::to_string(number1 - number2);
+    message += " that is the number: ";
 
     return message;
 }

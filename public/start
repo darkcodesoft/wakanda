@@ -13,9 +13,9 @@ if(!!args.port) {
 
 instance.router.get('/', (req, res) => {
     let message = greeter.hello()
-    message += ' by Teddy Moussignac'
+    message += 'Teddy Mousse'
 
-    res.status(200).send({ 'messsage': message })
+    res.status(200).send({ 'author': message })
 })
 
 instance.start()

@@ -1,6 +1,16 @@
 {
-    "ignore": ["**/*.test.ts", "**/*.spec.ts", ".git", "node_modules"],
-    "watch": ["public/start", "**/*.ts", "**/*.cc"],
+    "ignore": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        ".git",
+        "build",
+        "node_modules"
+    ],
+    "watch": [
+        "src",
+        "addons",
+        "public"
+    ],
     "exec": "npm run server",
-    "ext": "ts"
+    "ext": "ts, cc, h, scss"
 }
