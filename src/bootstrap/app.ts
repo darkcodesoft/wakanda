@@ -2,8 +2,6 @@ import Server from '../../public/server'
 import express from 'express'
 import createError from 'http-errors'
 
-const greeter = require('../../build/Release/greet.node')
-
 /**
  *
  *
