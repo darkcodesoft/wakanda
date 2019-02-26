@@ -1,4 +1,8 @@
 import express from 'express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import logger from 'morgan'
+import { urlencoded } from 'body-parser';
 
 /**
  *
@@ -79,6 +83,30 @@ class Server {
             port = parseInt(process.env.PORT)
             this.setPort(port)
         }
+
+        // set default middlewares
+        this.setupMiddleWares()
+    }
+
+    /**
+     * Set up default middlewares
+     * @returns void
+     */
+    private setupMiddleWares(): void {
+        // add http logger
+        this.process.use(logger('dev'));
+        // add json
+        this.process.use(express.json())
+        // add urlencoder
+        this.process.use(express.urlencoded({ extended: false }));
+        // add coockie parser
+        this.process.use(cookieParser());
+        // setup public directory
+        this.process.use(express.static(path.join(__dirname, 'public')));
+        // setup views directory
+        this.process.set('views', path.join(__dirname, 'views'));
+        // setup view engine
+        this.process.set('view engine', 'pug');
     }
 
     /**
