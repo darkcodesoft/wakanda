@@ -1,4 +1,8 @@
 import express from 'express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import logger from 'morgan'
+import { urlencoded } from 'body-parser';
 
 /**
  *
@@ -30,15 +34,23 @@ class Server {
      * @type {number[]}
      * @memberof Server
      */
-    private ports: number[] = [];
+    private ports: number[] = []
 
     /**
      *
-     * @private
+     *
      * @type {express.Application}
      * @memberof Server
      */
     public readonly process: express.Application
+
+    /**
+     *
+     *
+     * @type {express.Router}
+     * @memberof Server
+     */
+    public readonly router: express.Router
 
     /**
      * Get server static instance
@@ -63,12 +75,38 @@ class Server {
      */
     constructor() {
         this.process = express()
+        this.router = express.Router()
+        this.process.use(this.router)
 
         let port:number;
         if(!!process.env.PORT) {
             port = parseInt(process.env.PORT)
             this.setPort(port)
         }
+
+        // set default middlewares
+        this.setupMiddleWares()
+    }
+
+    /**
+     * Set up default middlewares
+     * @returns void
+     */
+    private setupMiddleWares(): void {
+        // add http logger
+        this.process.use(logger('dev'));
+        // add json
+        this.process.use(express.json())
+        // add urlencoder
+        this.process.use(express.urlencoded({ extended: false }));
+        // add coockie parser
+        this.process.use(cookieParser());
+        // setup public directory
+        this.process.use(express.static(path.join(__dirname, 'public')));
+        // setup views directory
+        this.process.set('views', path.join(__dirname, 'views'));
+        // setup view engine
+        this.process.set('view engine', 'pug');
     }
 
     /**
@@ -118,20 +156,6 @@ class Server {
         const max = 65535
         var num = +port;
         return num >= min && num <= max && port === num;
-    }
-
-    /**
-     * Add route
-     *
-     * @param {string} path
-     * @param {Function} callback
-     * @memberof Server
-     */
-    public route(path:string, callback:Function): void {
-        this.process.get(path, (req: express.Request, res: express.Response) => {
-            const data = callback()
-            res.send(data)
-        })
     }
 
     /**
