@@ -9,7 +9,7 @@
     "dev": "./node_modules/nodemon/bin/nodemon.js",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "test": "nyc mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'web/**/*.test.ts'"
+    "test": "nyc mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'public/**/*.test.ts'"
   },
   "nyc": {
     "extension": [
