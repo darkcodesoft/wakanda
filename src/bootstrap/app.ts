@@ -1,6 +1,6 @@
 import Server from '../../public/server'
 import express from 'express'
-import createError from 'http-errors'
+import createError, { HttpError } from 'http-errors'
 
 /**
  *
@@ -83,8 +83,13 @@ class App {
      * @memberof App
      */
     public main(): boolean {
-        this.server.start()
-        return true
+        try {
+            this.server.start()
+            return true
+        } catch (error) {
+            console.log(error)
+            return false
+        }
     }
 }
 
