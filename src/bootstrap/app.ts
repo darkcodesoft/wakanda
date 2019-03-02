@@ -60,12 +60,12 @@ class App {
     private setupDefaultApplicationRoutes(): void {
         // HTTP errors handlers
         // 404
-        this.server.router.use((req, res, next) => {
+        this.server.router.use((err:HttpError, req:express.Request, res: express.Response, next:express.NextFunction) => {
             next(createError(404))
         })
 
         // 500s
-        this.server.router.use((err:any, req:express.Request, res:express.Response, next:any) => {
+        this.server.router.use((err:HttpError, req:express.Request, res:express.Response, next:express.NextFunction) => {
             // set locals, only providing error in development
             res.locals.message = err.message
             res.locals.error = req.app.get('env') === 'development' ? err : {}

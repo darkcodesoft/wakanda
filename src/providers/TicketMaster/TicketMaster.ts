@@ -218,7 +218,7 @@ class TicketMaster {
      * @memberof TicketMaster
      */
     public fetch(): void {
-        var n = TicketMaster.limit;
+        var n = 0;
         this.setPage(n)
         do {
             const client = new request.Client()
@@ -229,9 +229,9 @@ class TicketMaster {
             } else {
                 this.successHandler(this.url, json)
             }
-            n--
+            n++
             this.setPage(n)
-        } while( n >= 0)
+        } while(n <= TicketMaster.limit)
 
     }
 }
