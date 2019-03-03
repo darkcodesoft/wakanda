@@ -11,6 +11,6 @@
         "addons",
         "public"
     ],
-    "exec": "npm run server",
+    "exec": "npm run start",
     "ext": "ts, cc, h, scss"
 }
