@@ -1,7 +1,6 @@
-#!./node_modules/.bin/ts-node
-
 const args = require('minimist')(process.argv.slice(2))
-const app = require('../src/bootstrap/app').default.static()
+import App from '../src/bootstrap/app'
+const app  = App.static()
 
 if(!!args.port) {
     let port = parseInt(args.port)
