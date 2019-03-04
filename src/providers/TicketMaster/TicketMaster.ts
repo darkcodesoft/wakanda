@@ -1,4 +1,4 @@
-const request = require('../../../build/Release/request')
+const request = require('../../../build/Release/request.node')
 
 /**
  *
