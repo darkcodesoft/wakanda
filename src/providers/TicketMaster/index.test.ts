@@ -1,4 +1,4 @@
-import TicketMaster from './TicketMaster'
+import TicketMaster from '.'
 import {expect} from 'chai'
 
 describe('TicketMaster Provider', () => {

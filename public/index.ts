@@ -9,6 +9,6 @@
 
 // app.main()
 
-import TicketMaster from '../src/providers/TicketMaster/TicketMaster'
+import TicketMaster from '../src/providers/TicketMaster'
 let provider = TicketMaster.static()
 provider.fetch()
