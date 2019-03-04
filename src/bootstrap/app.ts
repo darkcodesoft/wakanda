@@ -1,8 +1,6 @@
 import Server from '../../public/server'
 import express from 'express'
-import createError from 'http-errors'
-
-const greeter = require('../../build/Release/greet.node')
+import createError, { HttpError } from 'http-errors'
 
 /**
  *
@@ -62,12 +60,12 @@ class App {
     private setupDefaultApplicationRoutes(): void {
         // HTTP errors handlers
         // 404
-        this.server.router.use((req, res, next) => {
+        this.server.router.use((err:HttpError, req:express.Request, res: express.Response, next:express.NextFunction) => {
             next(createError(404))
         })
 
         // 500s
-        this.server.router.use((err:any, req:express.Request, res:express.Response, next:any) => {
+        this.server.router.use((err:HttpError, req:express.Request, res:express.Response, next:express.NextFunction) => {
             // set locals, only providing error in development
             res.locals.message = err.message
             res.locals.error = req.app.get('env') === 'development' ? err : {}
@@ -85,8 +83,13 @@ class App {
      * @memberof App
      */
     public main(): boolean {
-        this.server.start()
-        return true
+        try {
+            this.server.start()
+            return true
+        } catch (error) {
+            console.log(error)
+            return false
+        }
     }
 }
 

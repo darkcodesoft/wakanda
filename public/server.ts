@@ -18,7 +18,7 @@ class Server {
      * @type {(Server|null)}
      * @memberof Server
      */
-    private static instance?:Server|null = null;
+    private static instance?:Server|null = null
 
     /**
      *
@@ -94,19 +94,19 @@ class Server {
      */
     private setupMiddleWares(): void {
         // add http logger
-        this.process.use(logger('dev'));
+        this.process.use(logger('dev'))
         // add json
         this.process.use(express.json())
         // add urlencoder
-        this.process.use(express.urlencoded({ extended: false }));
+        this.process.use(express.urlencoded({ extended: false }))
         // add coockie parser
-        this.process.use(cookieParser());
+        this.process.use(cookieParser())
         // setup public directory
-        this.process.use(express.static(path.join(__dirname, 'public')));
+        this.process.use(express.static(path.join(__dirname, 'public')))
         // setup views directory
-        this.process.set('views', path.join(__dirname, 'views'));
+        this.process.set('views', path.join(__dirname, 'views'))
         // setup view engine
-        this.process.set('view engine', 'pug');
+        this.process.set('view engine', 'pug')
     }
 
     /**

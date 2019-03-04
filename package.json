@@ -5,9 +5,11 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "server": "ts-node ./public/www --port=7777",
+    "start": "npm run test && npm run build && node ./build/Release/wakanda.js --port=7777",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
-    "build": "node-gyp rebuild",
+    "build": "npm run build:c++ && npm run build:ts",
+    "build:ts": "webpack",
+    "build:c++": "node-gyp rebuild",
     "clean": "node-gyp clean",
     "test": "nyc mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'public/**/*.test.ts'"
   },
@@ -36,13 +38,21 @@
     "@types/mocha": "^5.2.6",
     "@types/morgan": "^1.7.35",
     "@types/node": "^11.9.5",
+    "@types/webpack": "^4.4.25",
+    "@types/webpack-dev-server": "^3.1.2",
+    "@types/webpack-node-externals": "^1.6.3",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "node-gyp": "^3.8.0",
+    "node-loader": "^0.6.0",
     "nodemon": "^1.18.10",
     "nyc": "^13.3.0",
+    "ts-loader": "^5.3.3",
     "ts-node": "^8.0.2",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "@types/http-errors": "^1.6.1",
