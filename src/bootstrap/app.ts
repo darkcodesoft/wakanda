@@ -7,25 +7,9 @@ import createError, { HttpError } from 'http-errors'
  *
  * @class App
  */
-class App {
+export default class App {
 
-    /**
-     *
-     *
-     * @private
-     * @static
-     * @type {(Server|null)}
-     * @memberof App
-     */
     private static instance?:App|null = null;
-
-    /**
-     *
-     *
-     * @static
-     * @type {Server}
-     * @memberof App
-     */
     public server:Server
 
     /**
@@ -92,5 +76,3 @@ class App {
         }
     }
 }
-
-export default App

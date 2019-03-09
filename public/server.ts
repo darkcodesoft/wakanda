@@ -2,54 +2,19 @@ import express from 'express'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
-import { urlencoded } from 'body-parser';
 
 /**
  *
  * Defines Server
  * @class Server
  */
-class Server {
+export default class Server {
 
-    /**
-     *
-     * @private
-     * @static
-     * @type {(Server|null)}
-     * @memberof Server
-     */
     private static instance?:Server|null = null
-
-    /**
-     *
-     * @private
-     * @type {(string|number)}
-     * @memberof Server
-     */
     private port: number = 3000
-
-    /**
-     *
-     * @private
-     * @type {number[]}
-     * @memberof Server
-     */
     private ports: number[] = []
 
-    /**
-     *
-     *
-     * @type {express.Application}
-     * @memberof Server
-     */
     public readonly process: express.Application
-
-    /**
-     *
-     *
-     * @type {express.Router}
-     * @memberof Server
-     */
     public readonly router: express.Router
 
     /**
@@ -170,5 +135,3 @@ class Server {
         })
     }
 }
-
-export default Server

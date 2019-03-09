@@ -1,96 +1,34 @@
-const request = require('../../../build/Release/request.node')
+import { Item, Source, TicketMasterSuccessResponse, TicketMasterEvent } from '../../interfaces/Event'
+import { NativeRequest } from '../../addons/request';
+import { Event, connection } from '../../models/Event'
+import { Factory } from '../../models/Factory'
+import { id, domain, apikey, countryCode, limit } from './source.json'
+import { connect } from 'mongoose';
 
 /**
+ * Define TicketMaster Provider.
  *
- *
+ * @export
  * @class TicketMaster
+ * @implements {Source}
+ * @implements {Storage}
  */
-class TicketMaster {
+export default class TicketMaster implements Source {
 
-    /**
-     *
-     *
-     * @private
-     * @static
-     * @type {number}
-     * @memberof TicketMaster
-     */
-    private static limit:number
+    public id: string
+    public domain: string
+    public limit: number
+    public apikey: string
+    public countryCode: string
 
-    /**
-     *
-     *
-     * @private
-     * @static
-     * @type {string}
-     * @memberof TicketMaster
-     */
-    private static countryCode:string
-
-    /**
-     *
-     *
-     * @private
-     * @type {URL}
-     * @memberof TicketMaster
-     */
-    private url:URL
-
-    /**
-     *
-     *
-     * @private
-     * @type {string}
-     * @memberof TicketMaster
-     */
-    private domain: string
-
-    /**
-     *
-     *
-     * @private
-     * @type {string}
-     * @memberof TicketMaster
-     */
-    private apiKey: string
-
-    /**
-     *
-     *
-     * @private
-     * @type {number}
-     * @memberof TicketMaster
-     */
-    private page: number = 0
-
-    /**
-     *
-     *
-     * @private
-     * @type {string[]}
-     * @memberof TicketMaster
-     */
+    private url: URL
+    private succeeded: Item[] = []
     private failed: URL[] = []
 
-    /**
-     *
-     *
-     * @returns {string}
-     * @memberof TicketMaster
-     */
-    public getDomain(): string {
-        return this.domain
-    }
+    private client: NativeRequest.Client = NativeRequest.Client
+    private page: number = 0
 
-    /**
-     *
-     *
-     * @returns {string}
-     * @memberof TicketMaster
-     */
-    public getApiKey(): string {
-        return this.apiKey
-    }
+    private static instance?: TicketMaster|null = null;
 
     /**
      *
@@ -108,7 +46,7 @@ class TicketMaster {
      * @param {number} p
      * @memberof TicketMaster
      */
-    public setPage(p:number): void{
+    public setPage(p: number): void{
         this.page = p
         this.url.searchParams.set('page', p.toString())
     }
@@ -144,12 +82,13 @@ class TicketMaster {
     /**
      *
      *
-     * @private
-     * @static
-     * @type {(Server|null)}
+     * @returns {TicketMasterEvent[]}
      * @memberof TicketMaster
      */
-    private static instance?:TicketMaster|null = null;
+    public getSucceeded(): Item[] {
+        return this.succeeded
+    }
+
 
     /**
      *
@@ -166,24 +105,26 @@ class TicketMaster {
     }
 
     /**
-     *Creates an instance of App.
-     * @memberof App
+     * Creates an instance of TicketMaster
+     *
+     * @memberof TicketMaster
      */
     constructor() {
-        // set config
-        let config = require('./config.json')
-        this.domain = config.domain!
-        this.apiKey = config.apikey!
-        TicketMaster.limit = config.apilimit!
-        TicketMaster.countryCode = config.countryCode!
+        // configure source
+        this.id = id
+        this.domain = domain
+        this.apikey = apikey
+        this.countryCode = countryCode!
+        this.limit = limit
 
         // configure url
-        this.url = new URL(this.domain)
-        this.url.searchParams.set('apikey', this.apiKey)
-        this.url.searchParams.set('countryCode', TicketMaster.countryCode)
+        this.url = new URL(domain)
+        this.url.searchParams.set('apikey', apikey)
+        this.url.searchParams.set('countryCode', countryCode!)
     }
 
     /**
+     * Api success response handler
      *
      * @todo add test
      * @private
@@ -191,13 +132,14 @@ class TicketMaster {
      * @param {{_embedded:{events:Object[]}}} json
      * @memberof TicketMaster
      */
-    private successHandler(url:URL, json:{_embedded:{events:Object[]}}): void {
-        console.log(json._embedded.events.length)
-        console.log(url)
-        // this.nextPage()
+    private successHandler(response: TicketMasterSuccessResponse): void {
+        const events: TicketMasterEvent[] = response._embedded.events
+        const collection: Item[] = Factory.makeFromTicketMasterEvents(events)
+        this.succeeded.push(...collection)
     }
 
     /**
+     * Api error reponse handler
      *
      * @todo add test
      * @private
@@ -205,35 +147,60 @@ class TicketMaster {
      * @param {Error} error
      * @memberof TicketMaster
      */
-    private errorHandler(url:URL, error:Error): void {
+    private errorHandler(url: URL, error: Error): void {
         this.failed.push(url)
         console.error(error)
         console.error(url)
     }
 
     /**
+     * Fetch provider data
      *
      * @todo add test
      * @returns {string}
      * @memberof TicketMaster
      */
     public fetch(): void {
-        var n = 0;
+        let n = 0;
         this.setPage(n)
+
         do {
-            const client = new request.Client()
-            const result = client.request(this.url.href)
-            let json = JSON.parse(result)
+            const result = this.client.request(this.url.href)
+            const json = JSON.parse(result)
+
             if(!!json.fault) {
                 this.errorHandler(this.url, json)
             } else {
-                this.successHandler(this.url, json)
+                this.successHandler(json as TicketMasterSuccessResponse)
             }
+
             n++
             this.setPage(n)
-        } while(n <= TicketMaster.limit)
 
+            if(n === this.limit) {
+                this.store()
+                break
+            }
+        } while(n <= this.limit)
+    }
+
+    /**
+     * Store provider data
+     *
+     * @memberof TicketMaster
+     */
+    public store(): void {
+        console.log('TOTAL: ' + this.limit)
+        console.log('Prepare to store...')
+        // console.log(this.succeeded)
+        Event.deleteMany({ source: this.id }, (err) => {
+            if(!err) {
+                Event.insertMany(this.succeeded, { ordered: false }, (err, docs) => {
+                    connection.close()
+                })
+            } else {
+                console.log(err)
+            }
+        })
     }
 }
-
-export default TicketMaster
