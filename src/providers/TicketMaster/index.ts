@@ -46,7 +46,7 @@ export default class TicketMaster implements Source {
      * @param {number} p
      * @memberof TicketMaster
      */
-    public setPage(p: number): void{
+    public setPage(p: number): void {
         this.page = p
         this.url.searchParams.set('page', p.toString())
     }
@@ -63,6 +63,8 @@ export default class TicketMaster implements Source {
 
     /**
      *
+     *
+     * @memberof TicketMaster
      */
     public previousPage(): void {
         this.page--
@@ -72,7 +74,7 @@ export default class TicketMaster implements Source {
     /**
      *
      *
-     * @returns {string[]}
+     * @returns {URL[]}
      * @memberof TicketMaster
      */
     public getFailed(): URL[] {
@@ -126,12 +128,11 @@ export default class TicketMaster implements Source {
     }
 
     /**
-     * Api success response handler
      *
-     * @todo add test
+     *
      * @private
      * @param {URL} url
-     * @param {{_embedded:{events:Object[]}}} json
+     * @param {TicketMasterSuccessResponse} response
      * @memberof TicketMaster
      */
     private successHandler(url: URL, response: TicketMasterSuccessResponse): void {
@@ -143,7 +144,6 @@ export default class TicketMaster implements Source {
     /**
      * Api error reponse handler
      *
-     * @todo add test
      * @private
      * @param {URL} url
      * @param {Error} error
@@ -156,10 +156,8 @@ export default class TicketMaster implements Source {
     }
 
     /**
-     * Fetch provider data
      *
-     * @todo add test
-     * @returns {string}
+     *
      * @memberof TicketMaster
      */
     public fetch(): void {

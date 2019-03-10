@@ -10,5 +10,9 @@
 // app.main()
 
 import TicketMaster from '../src/providers/TicketMaster'
-let provider = TicketMaster.static()
-provider.fetch()
+let ticketmaster = TicketMaster.static()
+ticketmaster.fetch()
+
+import EventBrite from '../src/providers/EventBrite'
+let eventbrite = EventBrite.static()
+eventbrite.fetch()

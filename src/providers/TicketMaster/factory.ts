@@ -122,21 +122,20 @@ export namespace Factory {
         }
         item.info.trim()
 
-        // // dates
+        // dates
         if(!!event.dates.start && !!event.dates.start.dateTime) {
-            let date = new Date(event.dates.start.dateTime)
+            const date = new Date(event.dates.start.dateTime)
             item.start = date
         } else if(!!event.dates.start && !!event.dates.start.localDate) {
-            let date = new Date(event.dates.start.localDate)
+            const date = new Date(event.dates.start.localDate)
             item.start = date
         }
 
-        // // if(!!event.dates.end) {
         if(!!event.dates.end && !!event.dates.end.dateTime) {
-            let date = new Date(event.dates.end.dateTime)
+            const date = new Date(event.dates.end.dateTime)
             item.end = date
         } else if(!!event.dates.end && !!event.dates.end.localDate) {
-            let date = new Date(event.dates.end.localDate)
+            const date = new Date(event.dates.end.localDate)
             item.end = date
         }
 
