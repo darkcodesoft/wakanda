@@ -12,8 +12,8 @@ export declare interface Item {
     info?: string
     location?: Location
     promoter?: Promoter
-    startDate?: Date
-    endDate?: Date
+    start?: Date
+    end?: Date
     venue?: Venue
     tags?: string[]
     active?: boolean
