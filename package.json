@@ -11,7 +11,7 @@
     "build:ts": "webpack",
     "build:c++": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "test": "nyc mocha --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'public/**/*.test.ts'"
+    "test": "nyc mocha --exit --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'public/**/*.test.ts'"
   },
   "nyc": {
     "extension": [

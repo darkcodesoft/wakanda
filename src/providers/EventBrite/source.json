@@ -4,5 +4,5 @@
     "token": "BHKOZKMHPLU2XIR7AT3U",
     "expand": "venue,organizer,category,subcategory,ticket_classes",
     "location": "nyc",
-    "limit": 20
+    "limit": 50
 }

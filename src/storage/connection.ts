@@ -16,13 +16,13 @@ export const connection = mongoose.createConnection(connectionURI, {
  * Connection error handler
  * If first connect fails because mongod is down, try again later.
  */
-connection.on('error', function (err) {
+connection.on('error', (err) => {
     if (err.message && err.message.match(/failed to connect to server .* on first connect/)) {
         console.log(new Date(), String(err));
 
-        setTimeout(function () {
+        setTimeout( () => {
             console.log("Retrying first connect...");
-            connection.openUri(connectionURI).catch(() => {});
+            connection.openUri(connectionURI).catch(() => {})
             // Why the empty catch?
             // Well, errors thrown by db.open() will also be passed to .on('error'),
             // so we can handle them there, no need to log anything in the catch here.
@@ -30,13 +30,13 @@ connection.on('error', function (err) {
         }, 20 * 1000);
     } else {
         // Some other error occurred.  Log it.
-        console.error(new Date(), String(err));
+        console.error(new Date(), String(err))
     }
 });
 
 /**
  * Open connection once
  */
-connection.once('open', function () {
-    console.log("Connection to db established.");
+connection.once('open', () => {
+    console.log("Connection to db established.")
 });
