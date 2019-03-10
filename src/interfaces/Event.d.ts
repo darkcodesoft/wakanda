@@ -18,7 +18,8 @@ export declare interface Item {
     tags?: string[]
     active?: boolean
     images?: Image[]
-    url: string
+    url: string,
+    price?: Price
 }
 
 /**
@@ -159,7 +160,20 @@ export declare interface TicketMasterEvent {
         segment: { name: string }
         genre: { name: string }
         subGenre: { name: string }
-    }[]
+    }[],
+    priceRanges: Price[]
+}
+
+/**
+ *
+ *
+ * @export
+ * @interface Price
+ */
+export declare interface Price {
+    currency: string
+    min: number
+    max: number
 }
 
 /**

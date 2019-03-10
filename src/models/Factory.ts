@@ -84,6 +84,11 @@ export namespace Factory {
             url: event.url
         }
 
+        // price
+        if(!!event.priceRanges && event.priceRanges.length > 0) {
+            item.price = event.priceRanges[0]
+        }
+
         // tags
         if(!!event.classifications && event.classifications.length > 0) {
             const classifications = event.classifications[0]

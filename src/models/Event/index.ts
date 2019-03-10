@@ -57,6 +57,15 @@ const ImageSchema = new Schema({
 }, { _id : false })
 
 /**
+ * Configure Price sub-schema
+ */
+const PriceSchema = new Schema({
+    currency: String,
+    min: Number,
+    max: Number
+}, { _id : false })
+
+/**
  * Configure Event schema
  */
 const EventSchema = new Schema({
@@ -73,7 +82,8 @@ const EventSchema = new Schema({
     tags: { type:[String], index: true },
     promoter: PromoterSchema,
     url: String,
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
+    price: PriceSchema
 })
 
 /**
