@@ -34,11 +34,15 @@ export namespace Factory {
      */
     export function makeFromTicketMasterEvents(events: TicketMasterEvent[]): Item[] {
         const collection: Item[] = []
+        let event: TicketMasterEvent
         let i = 0
         const max = events.length
 
         for( ; i < max; i++ ) {
-            collection[i] = makeFromTicketMasterEvent(events[i])
+            event = events[i]
+            if(!event.test) {
+                collection[i] = makeFromTicketMasterEvent(event)
+            }
         }
 
         return collection

@@ -152,6 +152,7 @@ export declare interface TicketMasterEvent {
     images?: Image[]
     dates: TicketMasterDateTime
     url: string
+    test: boolean
     _embedded: { venues: TicketMasterVenue[] }
     classifications: {
         segment: { name: string }
