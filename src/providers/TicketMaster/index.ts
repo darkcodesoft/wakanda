@@ -190,9 +190,6 @@ export default class TicketMaster implements Source {
      * @memberof TicketMaster
      */
     public store(): void {
-        console.log('TOTAL: ' + this.limit)
-        console.log('Prepare to store...')
-        // console.log(this.succeeded)
         Event.deleteMany({ source: this.id }, (err) => {
             if(!err) {
                 Event.insertMany(this.succeeded, { ordered: false }, (err, docs) => {

@@ -47,6 +47,16 @@ const VenueSchema = new Schema({
 }, { _id : false })
 
 /**
+ * Configure Image sub-schema
+ */
+const ImageSchema = new Schema({
+    ratio: String,
+    url: String,
+    width: Number,
+    height: Number
+}, { _id : false })
+
+/**
  * Configure Event schema
  */
 const EventSchema = new Schema({
@@ -55,12 +65,14 @@ const EventSchema = new Schema({
     source: String,
     name: { type: String, index: true, required: true },
     info: { type: String, index: true },
+    images: [ImageSchema],
     location: { type: LocationSchema, required: true },
-    promoter: PromoterSchema,
+    venue: VenueSchema,
     start: { type: Date, required: true},
     end: Date,
-    venue: VenueSchema,
     tags: { type:[String], index: true },
+    promoter: PromoterSchema,
+    url: String,
     active: { type: Boolean, default: true }
 })
 

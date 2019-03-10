@@ -3,5 +3,5 @@
     "domain": "https://app.ticketmaster.com/discovery/v2/events.json",
     "apikey": "M17CmH9jOiYwSGsDCMSVV0GNgmLmffYc",
     "countryCode": "US",
-    "limit": 1
+    "limit": 10
 }

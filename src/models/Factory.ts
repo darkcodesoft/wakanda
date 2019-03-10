@@ -1,6 +1,7 @@
 import {
     Item,
     Source,
+    Image,
     TicketMasterEvent,
     TicketMasterVenue
 } from '../interfaces/Event'
@@ -81,7 +82,8 @@ export namespace Factory {
                 classifications.segment.name.toLocaleLowerCase(),
                 classifications.genre.name.toLocaleLowerCase(),
                 classifications.subGenre.name.toLocaleLowerCase(),
-            ]
+            ],
+            url: event.url
         }
 
         // promoter
@@ -117,10 +119,25 @@ export namespace Factory {
             item.end = date
         } else if(!!event.dates.end && !!event.dates.end.localDate) {
             let date = new Date(event.dates.end.localDate)
-            item.start = date
+            item.end = date
         }
 
         // images
+        if(!!event.images) {
+            let image: Image
+            let i = 0
+            const images = []
+            const max = event.images.length
+
+            for( ; i < max; i++ ) {
+                image = event.images[i]
+                if(image.ratio === "3_2") {
+                    images.push(image)
+                }
+            }
+
+            item.images = images
+        }
 
         return item
     }

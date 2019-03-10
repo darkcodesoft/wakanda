@@ -17,6 +17,8 @@ export declare interface Item {
     venue?: Venue
     tags?: string[]
     active?: boolean
+    images?: Image[]
+    url: string
 }
 
 /**
@@ -105,6 +107,20 @@ export declare interface Storage {
  *
  *
  * @export
+ * @interface Image
+ */
+export declare interface Image {
+    ratio: string
+    url: string
+    width: number
+    height: number
+}
+
+
+/**
+ *
+ *
+ * @export
  * @interface TicketMasterResponse
  */
 export declare interface TicketMasterSuccessResponse {
@@ -133,8 +149,9 @@ export declare interface TicketMasterEvent {
     promoter: Promoter
     info?: string
     pleaseNote?: string
-    images?: TicketMasterImage[]
+    images?: Image[]
     dates: TicketMasterDateTime
+    url: string
     _embedded: { venues: TicketMasterVenue[] }
     classifications: {
         segment: { name: string }
@@ -165,19 +182,6 @@ export declare interface TicketMasterDate {
     localDate: string
     localTime?: string
     dateTime?: string
-}
-
-/**
- *
- *
- * @export
- * @interface TicketMasterImage
- */
-export declare interface TicketMasterImage {
-    ratio: string
-    url: string
-    width: number
-    height: number
 }
 
 /**
