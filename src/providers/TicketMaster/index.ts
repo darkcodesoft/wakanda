@@ -1,9 +1,8 @@
 import { Item, Source, TicketMasterSuccessResponse, TicketMasterEvent } from '../../interfaces/Event'
 import { NativeRequest } from '../../addons/request';
 import { Event, connection } from '../../models/Event'
-import { Factory } from '../../models/Factory'
 import { id, domain, apikey, countryCode, limit, marketId } from './source.json'
-import { connect } from 'mongoose';
+import { Factory } from './factory'
 
 /**
  * Define TicketMaster Provider.
@@ -137,7 +136,7 @@ export default class TicketMaster implements Source {
      */
     private successHandler(url: URL, response: TicketMasterSuccessResponse): void {
         const events: TicketMasterEvent[] = response._embedded.events
-        const collection: Item[] = Factory.makeFromTicketMasterEvents(events)
+        const collection: Item[] = Factory.collect(events)
         this.succeeded.push(...collection)
     }
 

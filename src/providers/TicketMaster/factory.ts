@@ -4,7 +4,7 @@ import {
     Image,
     TicketMasterEvent,
     TicketMasterVenue
-} from '../interfaces/Event'
+} from '../../interfaces/Event'
 
 /**
  * Define Event Factory namepace
@@ -21,7 +21,7 @@ export namespace Factory {
      * @param {string} source
      * @returns {string}
      */
-    export function makeEventId(sourceItemId: string, source: string): string {
+    export function makeId(sourceItemId: string, source: string): string {
         return `${source}__${sourceItemId}`
     }
 
@@ -32,7 +32,7 @@ export namespace Factory {
      * @param {TicketMasterEvent[]} events
      * @returns {Item[]}
      */
-    export function makeFromTicketMasterEvents(events: TicketMasterEvent[]): Item[] {
+    export function collect(events: TicketMasterEvent[]): Item[] {
         const collection: Item[] = []
         let event: TicketMasterEvent
         let i = 0
@@ -41,7 +41,7 @@ export namespace Factory {
         for( ; i < max; i++ ) {
             event = events[i]
             if(!event.test) {
-                collection[i] = makeFromTicketMasterEvent(event)
+                collection[i] = make(event)
             }
         }
 
@@ -55,12 +55,12 @@ export namespace Factory {
      * @param {TicketMasterEvent} event
      * @returns {Item}
      */
-    export function makeFromTicketMasterEvent(event: TicketMasterEvent): Item {
-        const source: Source = require('../providers/TicketMaster/source.json')
+    export function make(event: TicketMasterEvent): Item {
+        const source: Source = require('./source.json')
         const venue: TicketMasterVenue = event._embedded.venues[0]
 
         const item: Item = {
-            eventId: makeEventId(event.id, source.id),
+            eventId: makeId(event.id, source.id),
             sourceId: event.id,
             source: source.id,
             name: event.name.trim(),
