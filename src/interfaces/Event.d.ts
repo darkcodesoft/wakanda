@@ -87,6 +87,7 @@ export declare interface Source {
     domain: string
     apikey: string
     countryCode?: string
+    marketId?: number
     limit: number
 }
 

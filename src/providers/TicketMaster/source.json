@@ -3,5 +3,6 @@
     "domain": "https://app.ticketmaster.com/discovery/v2/events.json",
     "apikey": "M17CmH9jOiYwSGsDCMSVV0GNgmLmffYc",
     "countryCode": "US",
-    "limit": 10
+    "marketId": 35,
+    "limit": 100
 }

@@ -2,7 +2,7 @@ import { Item, Source, TicketMasterSuccessResponse, TicketMasterEvent } from '..
 import { NativeRequest } from '../../addons/request';
 import { Event, connection } from '../../models/Event'
 import { Factory } from '../../models/Factory'
-import { id, domain, apikey, countryCode, limit } from './source.json'
+import { id, domain, apikey, countryCode, limit, marketId } from './source.json'
 import { connect } from 'mongoose';
 
 /**
@@ -20,6 +20,7 @@ export default class TicketMaster implements Source {
     public limit: number
     public apikey: string
     public countryCode: string
+    public marketId: number
 
     private url: URL
     private succeeded: Item[] = []
@@ -116,11 +117,13 @@ export default class TicketMaster implements Source {
         this.apikey = apikey
         this.countryCode = countryCode!
         this.limit = limit
+        this.marketId = marketId
 
         // configure url
         this.url = new URL(domain)
         this.url.searchParams.set('apikey', apikey)
         this.url.searchParams.set('countryCode', countryCode!)
+        this.url.searchParams.set('marketId', marketId!.toString())
     }
 
     /**
@@ -132,7 +135,7 @@ export default class TicketMaster implements Source {
      * @param {{_embedded:{events:Object[]}}} json
      * @memberof TicketMaster
      */
-    private successHandler(response: TicketMasterSuccessResponse): void {
+    private successHandler(url: URL, response: TicketMasterSuccessResponse): void {
         const events: TicketMasterEvent[] = response._embedded.events
         const collection: Item[] = Factory.makeFromTicketMasterEvents(events)
         this.succeeded.push(...collection)
@@ -149,8 +152,8 @@ export default class TicketMaster implements Source {
      */
     private errorHandler(url: URL, error: Error): void {
         this.failed.push(url)
+        console.error('ERROR: ' + url.href)
         console.error(error)
-        console.error(url)
     }
 
     /**
@@ -161,17 +164,19 @@ export default class TicketMaster implements Source {
      * @memberof TicketMaster
      */
     public fetch(): void {
-        let n = 0;
+        let n = 0
         this.setPage(n)
 
         do {
             const result = this.client.request(this.url.href)
             const json = JSON.parse(result)
 
-            if(!!json.fault) {
+            if(!!json.fault || !!json.error) {
                 this.errorHandler(this.url, json)
+                this.store()
+                break
             } else {
-                this.successHandler(json as TicketMasterSuccessResponse)
+                this.successHandler(this.url, json as TicketMasterSuccessResponse)
             }
 
             n++

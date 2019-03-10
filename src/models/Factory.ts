@@ -58,7 +58,6 @@ export namespace Factory {
     export function makeFromTicketMasterEvent(event: TicketMasterEvent): Item {
         const source: Source = require('../providers/TicketMaster/source.json')
         const venue: TicketMasterVenue = event._embedded.venues[0]
-        const classifications = event.classifications[0]
 
         const item: Item = {
             eventId: makeEventId(event.id, source.id),
@@ -75,19 +74,29 @@ export namespace Factory {
                 city: venue.city.name,
                 region: venue.state.name,
                 country: venue.country.name,
-                address: venue.address.line1,
+                address: (!!venue.address.line1 ? venue.address.line1 : ''),
                 zipcode: venue.postalCode,
                 location: {
                     type: "Point",
                     coordinates:[parseFloat(venue.location.longitude), parseFloat(venue.location.latitude)]
                 }
             },
-            tags: [
-                classifications.segment.name.toLocaleLowerCase(),
-                classifications.genre.name.toLocaleLowerCase(),
-                classifications.subGenre.name.toLocaleLowerCase(),
-            ],
             url: event.url
+        }
+
+        // tags
+        if(!!event.classifications && event.classifications.length > 0) {
+            const classifications = event.classifications[0]
+            item.tags = []
+            if(!!classifications.segment) {
+                item.tags.push(classifications.segment.name.toLocaleLowerCase())
+            }
+            if(!!classifications.genre) {
+                item.tags.push(classifications.genre.name.toLocaleLowerCase())
+            }
+            if(!!classifications.subGenre) {
+                item.tags.push(classifications.subGenre.name.toLocaleLowerCase())
+            }
         }
 
         // promoter
