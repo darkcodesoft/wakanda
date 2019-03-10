@@ -1,6 +1,7 @@
 import { Item, Source, EventBriteSuccessResponse, EventBriteEvent } from '../../interfaces/Event'
 import { NativeRequest } from '../../addons/request';
-import { Event, connection } from '../../models/Event'
+import { connection } from '../../storage/connection'
+import { Event } from '../../models/Event'
 import { id, domain, token, expand, location, limit } from './source.json'
 import { Factory } from './factory'
 
@@ -191,6 +192,7 @@ export default class EventBrite implements Source {
         Event.deleteMany({ source: this.id }, (err) => {
             if(!err) {
                 Event.insertMany(this.succeeded, { ordered: false }, (err, docs) => {
+                    console.log(`!!! ${this.id} events insert success`)
                     connection.close()
                 })
             } else {

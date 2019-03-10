@@ -1,6 +1,7 @@
 import { Item, Source, TicketMasterSuccessResponse, TicketMasterEvent } from '../../interfaces/Event'
 import { NativeRequest } from '../../addons/request';
-import { Event, connection } from '../../models/Event'
+import { connection } from '../../storage/connection'
+import { Event } from '../../models/Event'
 import { id, domain, apikey, countryCode, limit, marketId } from './source.json'
 import { Factory } from './factory'
 
@@ -195,6 +196,7 @@ export default class TicketMaster implements Source {
         Event.deleteMany({ source: this.id }, (err) => {
             if(!err) {
                 Event.insertMany(this.succeeded, { ordered: false }, (err, docs) => {
+                    console.log(`!!! ${this.id} events insert success`)
                     connection.close()
                 })
             } else {

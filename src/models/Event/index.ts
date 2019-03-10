@@ -1,15 +1,6 @@
-import mongoose, { Document, Schema, Model } from "mongoose"
+import { Document, Schema, Model } from "mongoose"
+import { connection } from '../../storage/connection'
 import { Item } from '../../interfaces/Event'
-import { host, port, db } from './storage.json'
-
-/**
- * Configure and export database connection
- */
-export const connection = mongoose.createConnection(`${host}:${port}/${db}`, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: true
-})
 
 /**
  * Configure and export EventModel Type
