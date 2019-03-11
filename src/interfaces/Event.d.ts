@@ -281,6 +281,7 @@ export declare interface EventBriteEvent {
     is_free: boolean
     currency: string
     ticket_classes: TicketClass[]
+    format_id: string
 }
 
 /**

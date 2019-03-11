@@ -41,7 +41,7 @@ export namespace Factory {
 
         for( ; i < max; i++ ) {
             event = events[i]
-            if(!event.is_locked) {
+            if((!!event.format_id && !event.format_id.match(/14|100/)) && !!event.venue) {
                 collection[i] = make(event)
             }
         }

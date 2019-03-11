@@ -40,7 +40,7 @@ export namespace Factory {
 
         for( ; i < max; i++ ) {
             event = events[i]
-            if(!event.test) {
+            if(!event.test && !!event._embedded.venues && event._embedded.venues[0].location) {
                 collection[i] = make(event)
             }
         }
@@ -74,7 +74,7 @@ export namespace Factory {
                 city: venue.city.name,
                 region: venue.state.name,
                 country: venue.country.name,
-                address: (!!venue.address.line1 ? venue.address.line1 : ''),
+                address: ((!!venue.address && !!venue.address.line1) ? venue.address.line1 : ''),
                 zipcode: venue.postalCode,
                 location: {
                     type: "Point",

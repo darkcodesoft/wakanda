@@ -121,6 +121,8 @@ export default class EventBrite implements Source {
         this.url.searchParams.set('token', token)
         this.url.searchParams.set('expand', expand)
         this.url.searchParams.set('location.address', location)
+        this.url.searchParams.set('location.within', '300km')
+        this.url.searchParams.set('sort_by', 'date')
     }
 
     /**

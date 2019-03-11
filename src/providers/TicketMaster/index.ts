@@ -126,6 +126,8 @@ export default class TicketMaster implements Source {
         this.url.searchParams.set('apikey', apikey)
         this.url.searchParams.set('countryCode', countryCode!)
         this.url.searchParams.set('marketId', marketId!.toString())
+        this.url.searchParams.set('startDateTime', new Date().toISOString().split('.')[0] + 'Z')
+        this.url.searchParams.set('sort', 'date,asc')
     }
 
     /**
