@@ -93,13 +93,13 @@ export namespace Factory {
         if(!!event.classifications && event.classifications.length > 0) {
             const classifications = event.classifications[0]
             item.tags = []
-            if(!!classifications.segment) {
+            if(!!classifications.segment && classifications.segment.name.toLocaleLowerCase() !== 'undefined') {
                 item.tags.push(classifications.segment.name.toLocaleLowerCase())
             }
-            if(!!classifications.genre) {
+            if(!!classifications.genre && classifications.genre.name.toLocaleLowerCase() !== 'undefined') {
                 item.tags.push(classifications.genre.name.toLocaleLowerCase())
             }
-            if(!!classifications.subGenre) {
+            if(!!classifications.subGenre && classifications.subGenre.name.toLocaleLowerCase() !== 'undefined') {
                 item.tags.push(classifications.subGenre.name.toLocaleLowerCase())
             }
         }
