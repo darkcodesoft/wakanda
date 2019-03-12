@@ -1,6 +1,7 @@
 import {Event} from '../models/Event'
 import express from 'express'
 import { Mongoose } from 'mongoose'
+
 /**
  *
  *
@@ -11,12 +12,6 @@ export default class EventController {
 
     private static limit:number = 5
     private static instance?:EventController|null = null
-
-    /**
-     *Creates an instance of EventController.
-     * @memberof EventController
-     */
-    constructor() {}
 
     /**
      *

@@ -43,8 +43,9 @@ export default class App {
      * @memberof App
      */
     private setupDefaultApplicationRoutes(): void {
-        // Load routes
+        // Mount app routes
         require('../../public/routes')
+
         // HTTP errors handlers
         // 404
         this.server.router.use((err:HttpError, req:express.Request, res: express.Response, next:express.NextFunction) => {
