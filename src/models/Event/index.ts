@@ -60,7 +60,7 @@ const PriceSchema = new Schema({
  * Configure Event schema
  */
 const EventSchema = new Schema({
-    eventId : { type: String, index: true },
+    eventId : { type: String, index: true, unique: true },
     sourceId: String,
     source: String,
     name: { type: String, index: true, required: true },
