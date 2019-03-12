@@ -1,6 +1,7 @@
 import Server from '../../public/server'
 import express from 'express'
 import createError, { HttpError } from 'http-errors'
+import * as routes from '../../public/routes'
 
 /**
  *
@@ -42,6 +43,8 @@ export default class App {
      * @memberof App
      */
     private setupDefaultApplicationRoutes(): void {
+        // Load routes
+        require('../../public/routes')
         // HTTP errors handlers
         // 404
         this.server.router.use((err:HttpError, req:express.Request, res: express.Response, next:express.NextFunction) => {
