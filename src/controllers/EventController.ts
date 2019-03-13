@@ -1,6 +1,8 @@
 import {Event} from '../models/Event'
 import express from 'express'
 import { Mongoose } from 'mongoose'
+import { fork } from 'child_process'
+import { join } from 'path'
 
 /**
  *
@@ -10,7 +12,7 @@ import { Mongoose } from 'mongoose'
  */
 export default class EventController {
 
-    private static limit:number = 5
+    private static limit:number = 25
     private static instance?:EventController|null = null
 
     /**
@@ -63,22 +65,19 @@ export default class EventController {
     }
 
     /**
-     * Admin fetch method. Load providers to fetch event to update the database
+     * Admin fetch method. Load providers to fetch event to update the database in child process
      *
      * @param {express.Request} req
      * @param {express.Response} res
      * @memberof EventController
      */
     public fetch(req: express.Request, res: express.Response): void {
-        // ticket mastere
-        const TicketMaster = require('../../src/providers/TicketMaster')
-        let ticketmaster = TicketMaster.static()
-        ticketmaster.fetch()
+        const childProcess = fork(join(__dirname, '../../src/providers'), ['-r', 'ts-node/register'])
+        childProcess.on('message', (msg) => {
+            res.send(msg)
+        })
 
-        // eventbrite
-        const EventBrite = require('../../src/providers/EventBrite')
-        let eventbrite = EventBrite.static()
-        eventbrite.fetch()
+        res.send({ message: 'porcess started' })
     }
 }
 

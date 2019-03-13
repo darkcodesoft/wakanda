@@ -11,8 +11,8 @@ export interface EventModel extends Item, Document { }
  * Configure Location sub-schema
  */
 const LocationSchema = new Schema({
-    type: { type: String, enum: ['Point'] },
-    coordinates: { type: [Number] }
+    type: { type: String, enum: ['Point'] , required: true},
+    coordinates: { type: [Number], required: true }
 }, { _id : false })
 
 /**
@@ -34,7 +34,7 @@ const VenueSchema = new Schema({
     country: String,
     address: String,
     zipcode: String,
-    location: LocationSchema
+    location: { type: LocationSchema, required: true}
 }, { _id : false })
 
 /**
@@ -42,7 +42,7 @@ const VenueSchema = new Schema({
  */
 const ImageSchema = new Schema({
     ratio: String,
-    url: String,
+    url: { type: String, required: true },
     width: Number,
     height: Number
 }, { _id : false })
