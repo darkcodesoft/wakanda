@@ -18,6 +18,29 @@ export default class EventController {
     /**
      *
      *
+     * @private
+     * @param {string} query
+     * @returns {Json}
+     * @memberof EventController
+     */
+    private parseFields(query: string): any {
+        const fields: any = { 'name': 1, start: 1 }
+        const array: string[] = query.replace(/\s/g,'').split(',')
+        const max = array.length
+        let field: string
+        let i = 0
+
+        for( ; i < max; i++ ) {
+            field = array[i]
+            fields[field] = 1;
+        }
+
+        return fields
+    }
+
+    /**
+     *
+     *
      * @static
      * @returns {EventController}
      * @memberof EventController
@@ -25,6 +48,7 @@ export default class EventController {
     public static static(): EventController {
         if(EventController.instance === null) {
             EventController.instance = new EventController
+            return EventController.instance
         }
         return EventController.instance!;
     }
@@ -39,12 +63,16 @@ export default class EventController {
     public index(req: express.Request, res: express.Response): void {
         const limit = req.query.limit ? parseInt(req.query.limit) : EventController.limit
         const now = new Date().toISOString()
+        let fields = {}
+
+        if(!!req.query.fields) {
+            fields = EventController.static().parseFields(req.query.fields)
+        }
 
         Event.find({}).
             limit(limit).
             sort('start').
-            select({ name: 1, start: 1 }).
-            // select({ name: 1, location: 1, images: 1, eventId: 1, start: 1}).
+            select(fields).
             where({ active: true, start: { $gte: now } }).
             exec((error:any, events: Event[]) => {
                 res.send(events)
