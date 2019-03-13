@@ -26,11 +26,11 @@ export default class EventController {
     private parseFields(query: string): any {
         const fields: any = {}
         const array: string[] = query.replace(/\s/g,'').split(',')
-        const max = array.length
+        const size = array.length
         let field: string
         let i = 0
 
-        for( ; i < max; i++ ) {
+        for( ; i < size; i++ ) {
             field = array[i]
             fields[field] = 1;
         }
@@ -61,13 +61,9 @@ export default class EventController {
      * @memberof EventController
      */
     public index(req: express.Request, res: express.Response): void {
-        const limit = req.query.limit ? parseInt(req.query.limit) : EventController.limit
         const now = new Date().toISOString()
-        let fields = {}
-
-        if(!!req.query.fields) {
-            fields = EventController.static().parseFields(req.query.fields)
-        }
+        const limit = req.query.limit ? parseInt(req.query.limit) : EventController.limit
+        const fields = req.query.fields ? EventController.static().parseFields(req.query.fields) : {}
 
         Event.find({}).
             limit(limit).
