@@ -24,7 +24,7 @@ export default class EventController {
      * @memberof EventController
      */
     private parseFields(query: string): any {
-        const fields: any = { 'name': 1, start: 1 }
+        const fields: any = {}
         const array: string[] = query.replace(/\s/g,'').split(',')
         const max = array.length
         let field: string
