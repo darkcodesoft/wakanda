@@ -6,11 +6,11 @@ try {
     EventBrite.static().fetch()
 
     if(process.send) {
-        process.send({ message: 'done' })
+        process.send({ status: 200 })
     }
 } catch(e) {
     if(process.send) {
-        process.send({ message: e.message })
+        process.send({ status: 500, error: e })
     }
 }
 
