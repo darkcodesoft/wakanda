@@ -1,6 +1,5 @@
-import EventController from '../../src/controllers/EventController'
+import * as controller from '../../src/controllers/EventController'
 import Server from '../server'
-const controller = EventController.static()
 const server = Server.static()
 
 server.router.get('/event', controller.find)
