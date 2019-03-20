@@ -1,5 +1,6 @@
 import { User, UserModel } from '../models/User'
 import express from 'express'
+import { jsonHttpError } from '../lib/http'
 
 /**
  *
@@ -29,9 +30,9 @@ export async function create(req: express.Request, res: express.Response): Promi
 
     try {
         await user.save()
-        res.status(200).send(user)
+        res.send(user)
     } catch (error) {
-        res.status(500).send(error)
+        jsonHttpError(res, { code: 500, data: error })
     }
 }
 
@@ -46,9 +47,9 @@ export async function create(req: express.Request, res: express.Response): Promi
 export async function detail(req: express.Request, res: express.Response): Promise<void> {
     try {
         const user = await User.findOne({ _id: req.params.id })
-        res.status(200).send(user)
+        res.send(user)
     } catch(error) {
-        res.status(404).send(error)
+        jsonHttpError(res, { code: 404, data: error })
     }
 }
 
@@ -83,27 +84,29 @@ export async function login(req: express.Request, res: express.Response): Promis
     let user: UserModel|null
 
     if(!email || !password) {
-        res.status(500).send({ message: 'Email or password invalid.' })
+        jsonHttpError(res, { code: 400, message: 'Invalid email or password.' })
         return false
     }
 
     try {
         user = await User.findOne({ email: email })
         user!.comparePassword(password, async (error: any, isMatch?: boolean) => {
-            if(error) res.status(500).send(error)
+            if(error) jsonHttpError(res, { code: 500, data: error })
             else if(isMatch) {
                 // @todo: set user session here
                 try {
                     await User.updateOne({ _id: user!.id }, { lastLogin: new Date(), location: ip, active: true })
                     user = await User.findOne({ _id: user!.id })
-                    res.status(200).send(user)
+                    res.send(user)
                 } catch (error) {
-                    res.status(500).send(error)
+                    jsonHttpError(res, { code: 500, data: error })
                 }
             }
-            else res.status(404).send('User not found.')
+            else jsonHttpError(res, { code: 404, message: 'User not found' })
         })
     } catch (error) {
-        res.status(404).send(error)
+        jsonHttpError(res, { code: 404, data: error })
     }
 }
+
+// @todo: logout

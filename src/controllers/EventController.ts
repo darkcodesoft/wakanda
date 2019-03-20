@@ -2,6 +2,7 @@ import { Event } from '../models/Event'
 import express from 'express'
 import { fork } from 'child_process'
 import { join } from 'path'
+import { jsonHttpError } from '../lib/http'
 
 const base_limit: number = 25
 const base_page: number = 1
@@ -31,10 +32,10 @@ export async function find(req: express.Request, res: express.Response): Promise
         where({ active: true, start: { $gte: now } }).
         exec().
         then((events) => {
-            res.status(200).send(events)
+            res.send(events)
         }).
         catch((error) => {
-            res.status(404).send(error)
+            jsonHttpError(res, { code: 404, data: error })
         })
 }
 
@@ -49,9 +50,9 @@ export async function find(req: express.Request, res: express.Response): Promise
 export async function detail(req: express.Request, res: express.Response): Promise<void> {
     try {
         const event = await Event.findOne({ _id: req.params.id })
-        res.status(200).send(event)
+        res.send(event)
     } catch(error) {
-        res.status(404).send(error)
+        jsonHttpError(res, { code: 404, data: error })
     }
 }
 

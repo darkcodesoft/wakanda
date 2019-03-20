@@ -1,4 +1,4 @@
-import { Document, Schema, Model, Mongoose, HookNextFunction } from "mongoose"
+import { Document, Schema, Model, HookNextFunction } from "mongoose"
 import { connection } from '../../storage/connection'
 import roles from './roles.json'
 import bcrypt from 'bcrypt'
