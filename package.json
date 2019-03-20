@@ -1,7 +1,11 @@
 {
   "name": "wakanda",
   "version": "1.0.0",
-  "description": "",
+  "description": "Wakanda OS",
+  "repository": {
+    "type": "git",
+    "url": "https://storm2910@bitbucket.org/storm2910/wakanda.git"
+  },
   "main": "index.js",
   "gypfile": true,
   "scripts": {

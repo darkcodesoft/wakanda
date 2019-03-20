@@ -1,4 +1,3 @@
-import { Mongoose } from 'mongoose'
 import { User, UserModel } from '../models/User'
 import express from 'express'
 
@@ -25,9 +24,15 @@ export async function create(req: express.Request, res: express.Response): Promi
     const name = req.body.name
     const email = req.body.email
     const password = req.body.password
-    const user = await createUser({ name: name,  email: email, password: password})
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    const user = new User({ name: name,  email: email, password: password, location: ip })
 
-    res.send({ result: user })
+    try {
+        await user.save()
+        res.status(200).send(user)
+    } catch (error) {
+        res.status(500).send(error)
+    }
 }
 
 /**
@@ -41,11 +46,15 @@ export async function create(req: express.Request, res: express.Response): Promi
 export async function detail(req: express.Request, res: express.Response): Promise<void> {
     try {
         const user = await User.findOne({ _id: req.params.id })
-        res.send(user)
+        res.status(200).send(user)
     } catch(error) {
         res.status(404).send(error)
     }
 }
+
+// update
+
+// delete
 
 /**
  *
@@ -70,40 +79,31 @@ export function loginForm(req: express.Request, res: express.Response): void  {
 export async function login(req: express.Request, res: express.Response): Promise<void|boolean>  {
     const email = req.body.email
     const password = req.body.password
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    let user: UserModel|null
 
     if(!email || !password) {
-        res.status(500).send({ message: 'Email and/or password invalid.' })
+        res.status(500).send({ message: 'Email or password invalid.' })
         return false
     }
 
     try {
-        const user = await User.findOne({ email: email })
-        user!.comparePassword(password, (error: any, isMatch?: boolean) => {
+        user = await User.findOne({ email: email })
+        user!.comparePassword(password, async (error: any, isMatch?: boolean) => {
             if(error) res.status(500).send(error)
             else if(isMatch) {
-                // start user session
-                res.status(200).send(user)
+                // @todo: set user session here
+                try {
+                    await User.updateOne({ _id: user!.id }, { lastLogin: new Date(), location: ip, active: true })
+                    user = await User.findOne({ _id: user!.id })
+                    res.status(200).send(user)
+                } catch (error) {
+                    res.status(500).send(error)
+                }
             }
             else res.status(404).send('User not found.')
         })
     } catch (error) {
         res.status(404).send(error)
-    }
-}
-
-/**
- *
- *
- * @export
- * @param {User} creds
- * @returns {Promise<UserModel>}
- */
-export async function createUser(creds: User): Promise<UserModel> {
-    const user = new User({ name: creds.name,  email: creds.email, password: creds.password})
-    try {
-        const store = await user.save()
-        return user
-    } catch (error) {
-        return error
     }
 }

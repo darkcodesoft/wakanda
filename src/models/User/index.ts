@@ -28,7 +28,12 @@ const UserSchema = new Schema({
     name: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     role: { type: RoleSchema, default: roles.user },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    created: { type: Date, default: new Date() },
+    lastLogin: { type: Date, default: new Date() },
+    location: String,
+    active: { type: Boolean, default: true },
+    avatar: { type: String }
 })
 
 // bcrypt password on save
@@ -66,12 +71,12 @@ UserSchema.methods.comparePassword = function(candidatePassword: string, cb: (er
 UserSchema.path('email').validate((email: string) => {
     const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
     return emailRegex.test(email)
- }, 'Email is invalid.')
+}, 'Email is invalid.')
 
  // password
 UserSchema.path('password').validate((password: string) => {
     return password.length >= 6
- }, 'Password is invalid.')
+}, 'Password is invalid.')
 
 // Export User Model
 export const User: Model<UserModel> = connection.model<UserModel>("User", UserSchema)

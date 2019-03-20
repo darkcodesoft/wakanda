@@ -1,5 +1,4 @@
-import { Mongoose } from 'mongoose'
-import { Event, EventModel } from '../models/Event'
+import { Event } from '../models/Event'
 import express from 'express'
 import { fork } from 'child_process'
 import { join } from 'path'
@@ -50,11 +49,15 @@ export async function find(req: express.Request, res: express.Response): Promise
 export async function detail(req: express.Request, res: express.Response): Promise<void> {
     try {
         const event = await Event.findOne({ _id: req.params.id })
-        res.send(event)
+        res.status(200).send(event)
     } catch(error) {
         res.status(404).send(error)
     }
 }
+
+// update
+
+// delete
 
 /**
  *
