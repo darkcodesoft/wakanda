@@ -11,6 +11,6 @@
         "addons",
         "public"
     ],
-    "exec": "ts-node ./public/index.ts --port=7777",
+    "exec": "ts-node ./public/index.ts --port=7000",
     "ext": "ts, cc, h, scss"
 }

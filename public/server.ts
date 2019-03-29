@@ -1,7 +1,13 @@
 import express from 'express'
+import session from 'express-session'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
+import crypto from 'crypto'
+import { name } from '../package.json'
+import { connection } from '../src/storage/connection'
+
+const MongoStore = require('connect-mongo')(session)
 
 /**
  *
@@ -13,6 +19,7 @@ export default class Server {
     private static instance?:Server|null = null
     private port: number = 3000
     private ports: number[] = []
+    private cookieSecret: string
 
     public readonly process: express.Application
     public readonly router: express.Router
@@ -42,6 +49,7 @@ export default class Server {
         this.process = express()
         this.router = express.Router()
         this.process.use(this.router)
+        this.cookieSecret = crypto.createHash('md5').update(name).digest("hex")
 
         let port:number;
         if(!!process.env.PORT) {
@@ -65,7 +73,15 @@ export default class Server {
         // add urlencoder
         this.process.use(express.urlencoded({ extended: false }))
         // add coockie parser
-        this.process.use(cookieParser())
+        this.process.use(cookieParser(this.cookieSecret))
+        // add session middleware
+        this.process.use(session({
+            secret: this.cookieSecret,
+            resave: false,
+            saveUninitialized: true,
+            store: new MongoStore({ mongooseConnection: connection }),
+            cookie: { maxAge: 60000 }
+        }))
         // setup public directory
         this.process.use(express.static(path.join(__dirname, 'public')))
         // setup views directory

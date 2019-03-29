@@ -1,7 +1,6 @@
 import Server from '../../public/server'
 import express from 'express'
 import createError, { HttpError } from 'http-errors'
-import * as routes from '../../public/routes'
 
 /**
  *
