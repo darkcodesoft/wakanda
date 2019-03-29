@@ -47,18 +47,16 @@ export default class Server {
      */
     constructor() {
         this.process = express()
+        this.cookieSecret = crypto.createHash('md5').update(name).digest("hex")
+        this.setupMiddleWares()
         this.router = express.Router()
         this.process.use(this.router)
-        this.cookieSecret = crypto.createHash('md5').update(name).digest("hex")
 
         let port:number;
         if(!!process.env.PORT) {
             port = parseInt(process.env.PORT)
             this.setPort(port)
         }
-
-        // set default middlewares
-        this.setupMiddleWares()
     }
 
     /**
