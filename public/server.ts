@@ -1,4 +1,6 @@
 import express from 'express'
+import spdy from 'spdy'
+import fs from 'fs'
 import session from 'express-session'
 import path from 'path'
 import cookieParser from 'cookie-parser'
@@ -143,9 +145,15 @@ export default class Server {
      * @memberof Server
      */
     public start(): void {
-        const port:number = this.getPort()
-        this.process.listen(port, () => {
+        const port: number = this.getPort()
+        const options: spdy.ServerOptions = {
+            key: fs.readFileSync(path.join(__dirname, 'certificate/server.key'), 'utf8'),
+            cert: fs.readFileSync(path.join(__dirname, 'certificate/server.crt'), 'utf8')
+        }
+
+        spdy.createServer(options, this.process).listen(port, (err: any) => {
+            if (err) throw new Error(err)
             console.log(`Server started @ port: ${port}`)
-        })
+        });
     }
 }
