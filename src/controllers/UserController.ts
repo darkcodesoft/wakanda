@@ -81,13 +81,12 @@ export async function update(req: express.Request, res: express.Response): Promi
 export async function remove(req: express.Request, res: express.Response): Promise<void> {
 
     try {
-        await User.findByIdAndDelete({ _id: req.body.id})
+        await User.findByIdAndDelete({ _id: req.body.id })
         res.send({ message: 'Deleted' })
     } catch(error) {
         jsonHttpError(res, { code: 500, data: error })
     }
 }
-
 
 /**
  *

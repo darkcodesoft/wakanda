@@ -56,9 +56,40 @@ export async function detail(req: express.Request, res: express.Response): Promi
     }
 }
 
-// update
+/**
+ *
+ * @param req
+ * @param res
+ */
+export async function update(req: express.Request, res: express.Response): Promise<void> {
+    if(req.session) {
+        try {
+            const id = req.body.id ? req.body.id : req.session!.id
+            const event = await Event.findByIdAndUpdate(id, req.body)
+            res.send(event)
+        } catch(error) {
+            jsonHttpError(res, { code: 500, data: error })
+        }
+    } else {
+        jsonHttpError(res, { code: 404 })
+    }
+}
 
-// delete
+/**
+ * WARNING: we don't do this. have it just in case
+ *
+ * @param req
+ * @param res
+ */
+export async function remove(req: express.Request, res: express.Response): Promise<void> {
+
+    try {
+        await Event.findByIdAndDelete({ _id: req.body.id })
+        res.send({ message: 'Deleted' })
+    } catch(error) {
+        jsonHttpError(res, { code: 500, data: error })
+    }
+}
 
 /**
  *
