@@ -1,0 +1,86 @@
+extends ../partials/layout
+block container
+    div#dashboard.dashboard
+        //- nav
+        include ../partials/nav
+
+        form#event-form.modal(tabindex="-1" role="dialog" action="/user/login" method="post" style="display:block; position:relative")
+            div.modal-dialog(role="document" style="margin:0")
+                div.modal-content.card.rounded-0
+
+                    if event.images && event.images.length > 0
+                        img.card-img-top.rounded-0(src=event.images[0].url)
+
+                    div.modal-body
+                        div.form-group
+                            label.small.text-muted Name
+                            textarea.form-control(type="textarea" rows="1" name="name") #{event.name}
+                        div.form-group
+                            label.small.text-muted Source
+                            div.d-flex.flex-column.mb-3
+                                input.form-control.mb-1(type="text", name="sourceId" disabled value=event.sourceId)
+                                input.form-control.mb-1(type="text", name="source" disabled value=event.source)
+                        div.form-group
+                            label.small.text-muted Date
+                            input.form-control(type="text", name="start" value=(new Date(event.start)))
+                        div.form-groud
+                            label.small.text-muted Location
+                            div.d-flex.flex-column.mb-3
+                                input.form-control.mb-1(type="text", name="address" disabled value=event.venue.address)
+                                input.form-control.mb-1(type="text", name="city" disabled value=event.venue.city)
+                                input.form-control.mb-1(type="text", name="region" disabled value=event.venue.region)
+                                input.form-control.mb-1(type="text", name="country" disabled value=event.venue.country)
+                        div.form-group
+                            label.small.text-muted Tags
+                            input.form-control(type="text", name="tags" value=event.tags.join(', '))
+                        div.form-group
+                            label.small.text-muted Info
+                            textarea.form-control.small(type="textarea" rows="3" name="info") #{event.info}
+                        div.form-group
+                            label.small.text-muted Page
+                            input.form-control(type="text", name="url" value=event.url)
+                        div.form-group
+                            label.small.text-muted Publish
+                            select.form-control(type="text", name="active")
+                                option(value="true" selected=event.active==true) True
+                                option(value="false" selected=event.active==false) False
+
+                        div#alert-container.form-group
+
+                    //- submit button
+                    div.modal-footer
+                        input.btn.btn-secondary(type="button", value="Back")
+                        input.btn.btn-primary(type="submit", value="Save")
+
+        //- script
+        script.
+            var form = $('#event-form'),
+                back = $('.btn-secondary'),
+                messages = $('#alert-container'),
+                message
+
+            form.on('submit', function(e) {
+                e.preventDefault()
+                e.stopPropagation()
+
+                $.ajax({
+                    type: "POST",
+                    url: '/event/#{event.id}',
+                    data: form.serialize(),
+                    success: function(event) {
+                        if(event) {
+                            message = $(document.createElement('div'))
+                            .addClass('alert alert-success mb-1 small')
+                            .attr('role', 'alert')
+                            .text('Updated.')
+                            .appendTo(messages)
+                        }
+                    },
+                    dataType: 'json'
+                })
+                return false;
+            })
+
+            back.on('click', function(e) {
+                window.location.href = document.referrer
+            })

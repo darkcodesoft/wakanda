@@ -145,15 +145,19 @@ export default class Server {
      * @memberof Server
      */
     public start(): void {
-        const port: number = this.getPort()
-        const options: spdy.ServerOptions = {
-            key: fs.readFileSync(path.join(__dirname, 'certificate/server.key'), 'utf8'),
-            cert: fs.readFileSync(path.join(__dirname, 'certificate/server.crt'), 'utf8')
-        }
-
-        spdy.createServer(options, this.process).listen(port, (err: any) => {
-            if (err) throw new Error(err)
+        const port:number = this.getPort()
+        this.process.listen(port, () => {
             console.log(`Server started @ port: ${port}`)
-        });
+        })
+        // const port: number = this.getPort()
+        // const options: spdy.ServerOptions = {
+        //     key: fs.readFileSync(path.join(__dirname, 'certificate/server.key'), 'utf8'),
+        //     cert: fs.readFileSync(path.join(__dirname, 'certificate/server.crt'), 'utf8')
+        // }
+
+        // spdy.createServer(options, this.process).listen(port, (err: any) => {
+        //     if (err) throw new Error(err)
+        //     console.log(`Server started @ port: ${port}`)
+        // });
     }
 }

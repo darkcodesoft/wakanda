@@ -64,7 +64,7 @@ export async function detail(req: express.Request, res: express.Response): Promi
 export async function update(req: express.Request, res: express.Response): Promise<void> {
     if(req.session) {
         try {
-            const id = req.body.id ? req.body.id : req.session!.id
+            const id = req.params.id
             const event = await Event.findByIdAndUpdate(id, req.body)
             res.send(event)
         } catch(error) {

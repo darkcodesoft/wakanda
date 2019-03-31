@@ -1,0 +1,16 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+    //- toggle
+    button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+        span.navbar-toggler-icon
+    //- menu
+    div.collapse.navbar-collapse#navbarSupportedContent
+        ul.navbar-nav.mr-auto
+            li.nav-item.active
+                span.nav-link(href="#" onclick="window.location='/admin'") Dashboard
+                    span.sr-only (current)
+
+            li.nav-item
+                span.nav-link(href="#" onclick="window.location='/admin/event'") Events
+
+            li.nav-item
+                span.nav-link(href="#" onclick="window.location='/user/logout'") Logout

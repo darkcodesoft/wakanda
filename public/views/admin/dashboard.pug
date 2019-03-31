@@ -1,0 +1,18 @@
+extends ../partials/layout
+block container
+    div#dashboard.dashboard
+        //- nav
+        include ../partials/nav
+        //- module list
+        div.list-group
+            span#sys-message.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center.rounded-0.active.small Last updated on Mar 24th at 3:23pm
+            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin/event'") Events
+                span.badge.badge-primary.badge-pill #{eventCount}
+            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin'") User
+                span.badge.badge-primary.badge-pill #{userCount}
+
+        //- process
+        div.d-flex.mt-3.mb-3.align-items-end.container
+            div.col
+            button.btn.btn-primary Fetch Events
+
