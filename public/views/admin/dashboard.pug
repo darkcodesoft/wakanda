@@ -6,9 +6,15 @@ block container
         //- module list
         div.list-group
             span#sys-message.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center.rounded-0.active.small Last updated on Mar 24th at 3:23pm
-            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin/event'") Events
+            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin/event'")
+                h6.d-flex.align-items-center
+                    span.far.fa-comment-alt.mr-3
+                    span Events
                 span.badge.badge-primary.badge-pill #{eventCount}
-            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin'") User
+            span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin'")
+                h6.d-flex.align-items-center
+                    span.fa.fa-user-circle.mr-3
+                    span Users
                 span.badge.badge-primary.badge-pill #{userCount}
 
         //- process

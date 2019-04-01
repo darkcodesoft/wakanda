@@ -4,25 +4,10 @@ block container
         //- nav
         include ../partials/nav
 
-        //- search form
-        form.d-flex.container.pt-3.bg-primary(tabindex="-1" role="dialog" action="/admin/event/filter" method="get")
-            div.form-group.mr-3.flex-shrink-0
-                select.form-control.border-0(name="key")
-                    option(value="name") Name
-                    option(value="source") Source
-                    option(value="info") Info
-                    option(value="city") City
-                    option(value="region") State
-                    option(value="venue.name") Venue
-                    option(value="start") Start Date
-            div.form-group.mr-3
-                input.form-control.border-0(type="text", placeholder="Search" name="value")
-            div.form-group
-                input.btn.btn-dark(type="submit", value="Search")
-
         div.list-group
-            span#sys-message.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center.rounded-0.active Events
+            span#sys-message.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center.rounded-0.active Total
                 span.badge.badge-light.badge-pill #{count}
             for event in collection
-                span.list-group-item-action.list-group-item.d-flex.justify-content-between.align-items-center(href="#" onclick="window.location='/admin/event/"+event.id+"'")
+                h6.list-group-item-action.list-group-item.d-flex.align-items-center(href="#" onclick="window.location='/admin/event/"+event.id+"'")
+                    span.far.fa-comment-alt.mr-3
                     span.title #{event.name}

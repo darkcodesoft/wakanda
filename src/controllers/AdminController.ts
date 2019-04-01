@@ -35,7 +35,7 @@ export async function event(req: express.Request, res: express.Response): Promis
     if(req.params.id) {
         try {
             const event = await Event.findOne({ _id: req.params.id })
-            res.render('admin/event', { event: event, pageTitle: event!.name })
+            res.render('admin/event', { event: event, pageTitle: event!.name, detailPage: true })
         } catch(error) {
             jsonHttpError(res, { code: 404, data: error })
         }

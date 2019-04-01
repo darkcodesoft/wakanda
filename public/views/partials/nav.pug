@@ -1,7 +1,12 @@
 nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
     //- toggle
-    button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
-        span.navbar-toggler-icon
+    if(detailPage)
+        button.navbar-toggler.pt-2.pb-2.bg-white.text-primary(onclick="window.location='/admin/event'")
+            span.fa.fa-arrow-left
+    else
+        h1.text-white #{pageTitle}
+    button.navbar-toggler.pt-2.pb-2.bg-white.text-primary(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+        span.fas.fa-bars
     //- menu
     div.collapse.navbar-collapse#navbarSupportedContent
         ul.navbar-nav.mr-auto
@@ -14,3 +19,31 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
 
             li.nav-item
                 span.nav-link(href="#" onclick="window.location='/user/logout'") Logout
+
+        if(pageTitle == 'Events')
+            //- search form
+            form#search-form.d-flex.flex-column.container.pt-3.bg-white.mt-3.rounded(tabindex="-1" role="dialog" action="/admin/event/filter" method="get")
+                div.form-group
+                    select.form-control(name="key")
+                        option(value="name") Name
+                        option(value="source") Source
+                        option(value="info") Info
+                        option(value="city") City
+                        option(value="region") State
+                        option(value="venue.name") Venue
+                        option(value="start") Start Date
+                div.form-group
+                    input.form-control(type="text", placeholder="Keyword" name="value")
+                div.form-group
+                    input.btn.btn-dark.btn-block.btn-lg(type="submit", value="Search")
+
+
+                script.
+                    let form = $('#search-form')
+
+                    form.on('submit', (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+
+                        return false
+                    })
