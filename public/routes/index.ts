@@ -1,6 +1,12 @@
-// Mount Admin Routes
-export const admin_routes = require('./admin')
-// Mount user Routes
-export const users_routes = require('./user')
-// Mount event Routes
-export const events_routes = require('./event')
+import express from 'express'
+import events from './event'
+import users from './user'
+import admin from './admin'
+
+const router = express.Router()
+
+router.use('/admin', admin)
+router.use('/event', events)
+router.use('/user', users)
+
+export default router

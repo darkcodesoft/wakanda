@@ -1,14 +1,14 @@
-import { dashboard, event, user } from '../../src/controllers/AdminController'
-import { auth } from '../../src/controllers/UserController'
+import { dashboard, event, user, update } from '../../src/controllers/AdminController'
+import bodyParser from 'body-parser'
+import express from 'express'
 
-import Server from '../server'
-const server = Server.static()
+const router = express.Router()
 
-server.router.get('/', auth, dashboard)
-server.router.get('/admin', auth, dashboard)
-// events
-server.router.get('/admin/event', auth, event)
-server.router.get('/admin/event/filter', auth, event)
-server.router.get('/admin/event/:id', auth, event)
-// user
-server.router.get('/admin/user', auth, user)
+router.get('/', dashboard)
+router.get('/event', event)
+router.get('/event/:id', event)
+router.get('event/update', update) // secure
+router.get('/user', user)
+router.get('/user/:id', user)
+
+export default router

@@ -3,6 +3,10 @@ import express from 'express'
 import { jsonHttpError } from '../lib/http'
 import { NextFunction } from 'connect';
 
+const base_limit: number = 25
+const base_page: number = 1
+const base_sort: string = 'start'
+
 /**
  *
  *
@@ -11,7 +15,22 @@ import { NextFunction } from 'connect';
  * @param {express.Response} res
  */
 export function find(req: express.Request, res: express.Response): void {
-    res.send(req.session)
+    const limit = req.query.limit ? parseInt(req.query.limit) : base_limit
+    const page = req.query.page ? parseInt(req.query.page) : base_page
+    const skip = limit * (page - 1)
+    const sort = req.query.sort ? req.query.sort : base_sort
+
+    User.find({}).
+        skip(skip).
+        limit(limit).
+        sort(sort).
+        exec().
+        then((users) => {
+            res.send(users)
+        }).
+        catch((error) => {
+            jsonHttpError(res, { code: 404, data: error })
+        })
 }
 
 /**
@@ -80,26 +99,12 @@ export async function update(req: express.Request, res: express.Response): Promi
  * @param res
  */
 export async function remove(req: express.Request, res: express.Response): Promise<void> {
-
     try {
         await User.findByIdAndDelete({ _id: req.body.id })
         res.send({ message: 'Deleted' })
     } catch(error) {
         jsonHttpError(res, { code: 500, data: error })
     }
-}
-
-/**
- *
- *
- * @export
- * @param {express.Request} req
- * @param {express.Response} res
- */
-export function loginForm(req: express.Request, res: express.Response): void  {
-    const timestamp = new Date()
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    res.render('user/login', { pageTitle: 'Login', ip: ip, timestamp: timestamp })
 }
 
 /**
@@ -117,14 +122,14 @@ export async function login(req: express.Request, res: express.Response): Promis
     let user: UserModel|null
 
     if(!email || !password) {
-        res.render('user/login', { error: { code: 400, message: 'Invalid email or password.' } })
+        jsonHttpError(res, { code: 400, data: { message: 'Invalid email or password.' }})
         return false
     }
 
     try {
         user = await User.findOne({ email: email })
         user!.comparePassword(password, async (error: any, isMatch?: boolean) => {
-            if(error) res.render('user/login', { error: { code: 500, data: error } })
+            if(error) jsonHttpError(res, { code: 500, data: error })
             else if(isMatch) {
 
                 try {
@@ -134,13 +139,13 @@ export async function login(req: express.Request, res: express.Response): Promis
                     req.session!.userIp = ip
                     res.redirect('/')
                 } catch (error) {
-                    res.render('user/login', { error: { code: 500, data: error } })
+                    jsonHttpError(res, { code: 500, data: error })
                 }
             }
-            else res.render('user/login', { error: { code: 404, message: 'User not found.' } })
+            else jsonHttpError(res, { code: 404, data: { message: 'User not found.' }})
         })
     } catch (error) {
-        res.render('user/login', { error: { code: 404, data: error } })
+        jsonHttpError(res, { code: 404, data: error })
     }
 }
 

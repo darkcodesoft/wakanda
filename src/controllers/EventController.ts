@@ -1,8 +1,6 @@
 import { Event } from '../models/Event'
 import express from 'express'
-import { fork } from 'child_process'
-import { join } from 'path'
-import { jsonHttpError } from '../lib/http'
+import { jsonHttpError, parseFields } from '../lib/http'
 
 const base_limit: number = 25
 const base_page: number = 1
@@ -82,54 +80,10 @@ export async function update(req: express.Request, res: express.Response): Promi
  * @param res
  */
 export async function remove(req: express.Request, res: express.Response): Promise<void> {
-
     try {
         await Event.findByIdAndDelete({ _id: req.body.id })
         res.send({ message: 'Deleted' })
     } catch(error) {
         jsonHttpError(res, { code: 500, data: error })
     }
-}
-
-/**
- *
- *
- * @export
- * @param {express.Request} req
- * @param {express.Response} res
- */
-export function fetch(req: express.Request, res: express.Response): void {
-    const process = fork(join(__dirname, '../../src/providers'), ['-r', 'ts-node/register'])
-    console.log('Provider fetch started:' + new Date() )
-    process.on('message', (msg) => {
-        if(msg.status === 200) {
-            console.log('Provider fetch completed:' + new Date())
-        } else {
-            console.log('Provider fetch error:' + new Date())
-            console.log(msg)
-        }
-    })
-
-    res.send({ message: 'porcess started' })
-}
-
-/**
- *
- *
- * @param {string} query
- * @returns {*}
- */
-function parseFields(query: string): any {
-    const fields: any = {}
-    const array: string[] = query.replace(/\s/g,'').split(',')
-    const size = array.length
-    let field: string
-    let i = 0
-
-    for( ; i < size; i++ ) {
-        field = array[i]
-        fields[field] = 1;
-    }
-
-    return fields
 }

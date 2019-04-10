@@ -14,17 +14,17 @@ const LocationSchema = new Schema({
 // Configure Promoter sub-schema
 const PromoterSchema = new Schema({
     id: String,
-    name: String
+    name: { type: String, index: true }
 }, { _id : false })
 
 // Configure Venue sub-schema
 const VenueSchema = new Schema({
     id: String,
-    name: String,
-    city: String,
-    region: String,
-    country: String,
-    address: String,
+    name: { type: String, index: true },
+    city: { type: String, index: true },
+    region: { type: String, index: true },
+    country: { type: String, index: true },
+    address: { type: String, index: true },
     zipcode: String,
     location: { type: LocationSchema, required: true}
 }, { _id : false })

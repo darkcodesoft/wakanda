@@ -19,14 +19,14 @@ export interface UserModel extends User, Document {
 
 // Configure Role sub-Schema
 const RoleSchema = new Schema({
-    name: String,
+    name: { type: String, index: true },
     permissions: [String]
 }, { _id: false})
 
 // Configure User Schema
 const UserSchema = new Schema({
-    name: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    name: { type: String, index: true, required: true, unique: true },
+    email: { type: String, index: true, required: true, unique: true },
     role: { type: RoleSchema, default: roles.user },
     password: { type: String, required: true },
     created: { type: Date, default: new Date() },

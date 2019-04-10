@@ -1,6 +1,5 @@
 import {
     find,
-    loginForm,
     logout,
     login,
     create,
@@ -9,19 +8,18 @@ import {
     detail,
     auth
 } from '../../src/controllers/UserController'
-
-import Server from '../server'
 import bodyParser from 'body-parser'
+import express from 'express'
 
-const server = Server.static()
 const urlEncodeParser = bodyParser.urlencoded({ extended: false })
+const router = express.Router()
 
-server.router.get('/user', auth, find) // secure
-server.router.get('/user/login', loginForm)
-server.router.get('/user/logout', logout)
-server.router.post('/user/login', urlEncodeParser, login)
+router.get('/', find) // secure
+router.get('/logout', logout)
+router.post('/login', urlEncodeParser, login)
+router.get('/:id', detail) // secure
+router.post('/create', urlEncodeParser, create)
+router.put('/:id', auth, update) // secure
+router.delete('/:id', auth, remove) // secure
 
-server.router.post('/user/create', urlEncodeParser, create)
-server.router.get('/user/:id', detail) // secure
-server.router.put('/user/:id', auth, update) // secure
-server.router.delete('/user/:id', auth, remove) // secure
+export default router

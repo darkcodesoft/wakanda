@@ -25,3 +25,25 @@ export function jsonHttpError(response: express.Response, payload: HttpResponseE
     response.status(payload.code).send(payload)
     console.log(payload)
 }
+
+
+/**
+ *
+ *
+ * @param {string} query
+ * @returns {*}
+ */
+export function parseFields(query: string): any {
+    const fields: any = {}
+    const array: string[] = query.replace(/\s/g,'').split(',')
+    const size = array.length
+    let field: string
+    let i = 0
+
+    for( ; i < size; i++ ) {
+        field = array[i]
+        fields[field] = 1;
+    }
+
+    return fields
+}

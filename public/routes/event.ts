@@ -1,19 +1,20 @@
 import {
     find,
-    fetch,
     detail,
     update,
-    remove
+    remove,
 } from '../../src/controllers/EventController'
-
 import { auth } from '../../src/controllers/UserController'
-import Server from '../server'
+import bodyParser from 'body-parser'
+import express from 'express'
 
-const server = Server.static()
+const urlEncodeParser = bodyParser.urlencoded({ extended: false })
+const router = express.Router()
 
-server.router.get('/event', find)
-server.router.get('/event/fetch', auth, fetch) // secure
+router.get('/', find)
+router.get('/:id', detail)
+router.post('/:id', auth, urlEncodeParser, update) // secure
+router.put('/:id', auth, urlEncodeParser, update) // secure
+router.delete('/:id', auth, remove) // secure
 
-server.router.get('/event/:id', detail)
-server.router.post('/event/:id', update) // secure
-server.router.delete('/event/:id', auth, remove) // secure
+export default router
