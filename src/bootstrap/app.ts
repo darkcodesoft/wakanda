@@ -1,31 +1,17 @@
 import Server from '../../public/server'
 import express from 'express'
 import createError, { HttpError } from 'http-errors'
+import { jsonHttpError } from '../lib/http'
+import routes from '../../public/routes/'
 
 /**
  *
  *
  * @class App
  */
-class App {
+export default class App {
 
-    /**
-     *
-     *
-     * @private
-     * @static
-     * @type {(Server|null)}
-     * @memberof App
-     */
     private static instance?:App|null = null;
-
-    /**
-     *
-     *
-     * @static
-     * @type {Server}
-     * @memberof App
-     */
     public server:Server
 
     /**
@@ -58,21 +44,21 @@ class App {
      * @memberof App
      */
     private setupDefaultApplicationRoutes(): void {
+        // Mount app routes
+        this.server.router.use('/api/v1/', routes)
+
         // HTTP errors handlers
         // 404
-        this.server.router.use((err:HttpError, req:express.Request, res: express.Response, next:express.NextFunction) => {
+        this.server.router.use((req:express.Request, res: express.Response, next:express.NextFunction) => {
             next(createError(404))
         })
 
         // 500s
         this.server.router.use((err:HttpError, req:express.Request, res:express.Response, next:express.NextFunction) => {
-            // set locals, only providing error in development
             res.locals.message = err.message
             res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-            // render the error page
-            res.status(err.status || 500)
-            res.render('error')
+            jsonHttpError(res, { code: (err.status || 500), data: err })
         })
     }
 
@@ -92,5 +78,3 @@ class App {
         }
     }
 }
-
-export default App

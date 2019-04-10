@@ -13,14 +13,6 @@ describe('TicketMaster Provider', () => {
         expect(provider).to.be.instanceof(TicketMaster)
     })
 
-    it('should have a domain attibute set', () => {
-        expect(!!provider.getDomain()).to.not.equal(false)
-    })
-
-    it('should have an apiKey attibute set', () => {
-        expect(!!provider.getApiKey()).to.not.equal(false)
-    })
-
     it('should get page attribute', () => {
         expect(provider.getPage()).to.be.gte(0)
     })
