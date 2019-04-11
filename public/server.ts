@@ -83,7 +83,7 @@ export default class Server {
             resave: false,
             saveUninitialized: true,
             store: new MongoStore({ mongooseConnection: connection }),
-            cookie: { maxAge: 60000 }
+            cookie: { maxAge: ( 24 * 60 * 60  * 1000 ) } // 24hr session
         }))
         // setup public directory
         this.process.use(express.static(path.join(__dirname, 'public')))
