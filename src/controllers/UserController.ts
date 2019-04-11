@@ -136,6 +136,7 @@ export async function login(req: express.Request, res: express.Response): Promis
                     await User.updateOne({ _id: user!.id }, { lastLogin: new Date(), location: ip, active: true })
                     user = await User.findOne({ _id: user!.id }).select({ password: 0, active: 0, created: 0, __v: 0 })
                     req.session!.userId = user!.id
+                    req.session!.userName = user!.name
                     req.session!.userIp = ip
                     res.send({ session: req.session!, user: user })
                 } catch (error) {
