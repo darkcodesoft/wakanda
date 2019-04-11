@@ -1,8 +1,0 @@
-{
-    "domains": [
-        "http://localhost:8080",
-        "http://192.168.0.20:8080/",
-        "https://dev.loosey.com:8080",
-        "http://dev.loosey.com:8080"
-    ]
-}

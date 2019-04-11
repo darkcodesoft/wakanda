@@ -1,5 +1,4 @@
 import { dashboard, event, user, update } from '../../src/controllers/AdminController'
-import bodyParser from 'body-parser'
 import express from 'express'
 
 const router = express.Router()

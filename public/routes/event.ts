@@ -1,9 +1,4 @@
-import {
-    find,
-    detail,
-    update,
-    remove,
-} from '../../src/controllers/EventController'
+import { find, detail, update, remove } from '../../src/controllers/EventController'
 import { auth } from '../../src/controllers/UserController'
 import bodyParser from 'body-parser'
 import express from 'express'

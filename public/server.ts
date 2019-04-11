@@ -2,7 +2,7 @@ import express from 'express'
 import spdy from 'spdy'
 import fs from 'fs'
 import cors from 'cors'
-import { enableCors } from './cors'
+import { domains } from './cors.json'
 import session from 'express-session'
 import path from 'path'
 import cookieParser from 'cookie-parser'
@@ -68,26 +68,7 @@ export default class Server {
      * @returns void
      */
     private setupMiddleWares(): void {
-        var whitelist = [
-            'https://localhost:8080',
-            'http://192.168.0.20:8080/',
-            'http://192.168.0.20:8080/',
-            'https://dev.loosey.com:8080',
-            'http://dev.loosey.com:8080'
-        ]
-
-        var corsOptionsDelegate = function (req:any, callback:any) {
-            var corsOptions;
-            if (whitelist.indexOf(req.header('Origin')) !== -1) {
-              corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-            } else {
-              corsOptions = { origin: true } // disable CORS for this request
-            }
-            callback(null, corsOptions) // callback expects two parameters: error and options
-        }
-
-        this.process.use(cors(corsOptionsDelegate))
-        // this.process.use(enableCors())
+        this.process.use(this.corsSetup())
         // add http logger
         this.process.use(logger('dev'))
         // add json
@@ -159,6 +140,22 @@ export default class Server {
         const max = 65535
         var num = +port;
         return num >= min && num <= max && port === num;
+    }
+
+    /**
+     * CORS setup
+     * @returns Function
+     */
+    private corsSetup() {
+        return cors((req, callback) => {
+            let config
+            if(domains.indexOf(req.header('Origin')!) !== -1) {
+                config = { origin: true }
+            } else {
+                config = { origin: false }
+            }
+            callback( null, config )
+        })
     }
 
     /**
