@@ -60,16 +60,12 @@ export async function detail(req: express.Request, res: express.Response): Promi
  * @param res
  */
 export async function update(req: express.Request, res: express.Response): Promise<void> {
-    if(req.session) {
-        try {
-            const id = req.params.id
-            const event = await Event.findByIdAndUpdate(id, req.body)
-            res.send(event)
-        } catch(error) {
-            jsonHttpError(res, { code: 500, data: error })
-        }
-    } else {
-        jsonHttpError(res, { code: 404 })
+    try {
+        const id = req.params.id
+        const event = await Event.findByIdAndUpdate(id, req.body)
+        res.send(event)
+    } catch(error) {
+        jsonHttpError(res, { code: 500, data: error })
     }
 }
 

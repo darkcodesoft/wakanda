@@ -1,6 +1,5 @@
 import {
     find,
-    logout,
     login,
     create,
     update,
@@ -14,12 +13,11 @@ import express from 'express'
 const urlEncodeParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
-router.get('/', find) // secure
-router.get('/logout', logout)
+router.get('/', auth, find)
 router.post('/login', urlEncodeParser, login)
-router.get('/:id', detail) // secure
+router.get('/:id', auth, detail)
 router.post('/create', urlEncodeParser, create)
-router.put('/:id', auth, update) // secure
-router.delete('/:id', auth, remove) // secure
+router.put('/:id', auth, update)
+router.delete('/:id', auth, remove)
 
 export default router

@@ -6,10 +6,10 @@ import express from 'express'
 const urlEncodeParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
-router.get('/', find)
-router.get('/:id', detail)
-router.post('/:id', auth, urlEncodeParser, update) // secure
-router.put('/:id', auth, urlEncodeParser, update) // secure
-router.delete('/:id', auth, remove) // secure
+router.get('/', auth, find)
+router.get('/:id', auth, detail)
+router.post('/:id', auth, urlEncodeParser, update)
+router.put('/:id', auth, urlEncodeParser, update)
+router.delete('/:id', auth, remove)
 
 export default router

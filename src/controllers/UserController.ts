@@ -2,8 +2,7 @@ import { User, UserModel } from '../models/User'
 import express from 'express'
 import { jsonHttpError } from '../lib/http'
 import { NextFunction } from 'connect';
-// import jwt from 'jsonwebtoken';
-import { JWTSign, JWTVerify, JWTDecode, JWTPayload } from '../services/jwt';
+import { JWTSign, JWTVerify } from '../services/jwt';
 
 const base_limit: number = 25
 const base_page: number = 1
@@ -16,7 +15,6 @@ export {
     update,
     remove,
     login,
-    logout,
     auth
 }
 
@@ -92,17 +90,13 @@ async function detail(req: express.Request, res: express.Response): Promise<void
  * @param res
  */
 async function update(req: express.Request, res: express.Response): Promise<void> {
-    if(req.session) {
         try {
-            const id = req.body.id ? req.body.id : req.session!.id
+            const id = req.params.id
             const user = await User.findByIdAndUpdate(id, req.body)
             res.send(user)
         } catch(error) {
             jsonHttpError(res, { code: 500, data: error })
         }
-    } else {
-        jsonHttpError(res, { code: 404 })
-    }
 }
 
 /**
@@ -168,21 +162,6 @@ async function login(req: express.Request, res: express.Response): Promise<void|
 }
 
 /**
- *
- * @param req
- * @param res
- */
-async function logout(req: express.Request, res: express.Response): Promise<void> {
-    req.session!.destroy((error) => {
-        if(error) {
-            jsonHttpError(res, { code: 500, data: error })
-        } else {
-            res.send({ logout: true })
-        }
-    })
-}
-
-/**
  * Auth middleware
  *
  * @param req
@@ -193,8 +172,6 @@ function auth(req: express.Request, res: express.Response, next: NextFunction): 
     const token = req.headers['x-access-token']! || null
     const id = req.headers['x-access-id']! || null
     const host = req.headers.host
-    console.log(token)
-    // console.log(req)
 
     if(!token || !id || !host) return jsonHttpError(res, { code: 401, data: { message: 'No token provided.' }})
 

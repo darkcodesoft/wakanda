@@ -3,15 +3,12 @@ import spdy from 'spdy'
 import fs from 'fs'
 import cors from 'cors'
 import { domains } from './cors.json'
-import session from 'express-session'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import crypto from 'crypto'
 import { name } from '../package.json'
 import { connection } from '../src/storage/connection'
-
-const MongoStore = require('connect-mongo')(session)
 
 /**
  *
@@ -77,14 +74,6 @@ export default class Server {
         this.process.use(express.urlencoded({ extended: false }))
         // add coockie parser
         this.process.use(cookieParser(this.cookieSecret))
-        // add session middleware
-        this.process.use(session({
-            secret: this.cookieSecret,
-            resave: false,
-            saveUninitialized: true,
-            store: new MongoStore({ mongooseConnection: connection }),
-            cookie: { maxAge: ( 24 * 60 * 60  * 1000 ) } // 24hr session
-        }))
         // setup public directory
         this.process.use(express.static(path.join(__dirname, 'public')))
         // setup views directory
