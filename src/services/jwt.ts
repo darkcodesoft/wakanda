@@ -10,6 +10,8 @@ const PUBLIC_KEY = fs.readFileSync(path.join(__dirname, '../keys/public.key'), '
  */
 export interface JWTPayload {
     _id: string,
+    name: string,
+    email: string,
     host: string
 }
 

@@ -143,12 +143,8 @@ async function login(req: express.Request, res: express.Response): Promise<void|
                     await User.updateOne({ _id: user!.id }, { lastLogin: new Date(), location: ip, active: true })
                     user = await User.findOne({ _id: user!.id }).select({ password: 0, active: 0, created: 0, __v: 0 })
                     if(user && req.headers.host)  {
-                        const JWTToken = JWTSign({ _id: user.id, host: req.headers.host! })
-                        res.send({
-                            success: true,
-                            user: user,
-                            token: JWTToken,
-                        })
+                        const JWTToken = JWTSign({ _id: user.id, name: user.name, email: user.email, host: req.headers.host! })
+                        res.send({ token: JWTToken })
                     }
                 } catch (error) {
                     jsonHttpError(res, { code: 500, data: error })
