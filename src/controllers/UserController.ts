@@ -2,10 +2,23 @@ import { User, UserModel } from '../models/User'
 import express from 'express'
 import { jsonHttpError } from '../lib/http'
 import { NextFunction } from 'connect';
+// import jwt from 'jsonwebtoken';
+import { JWTSign, JWTVerify, JWTDecode, JWTPayload } from '../services/jwt';
 
 const base_limit: number = 25
 const base_page: number = 1
 const base_sort: string = 'start'
+
+export {
+    find,
+    create,
+    detail,
+    update,
+    remove,
+    login,
+    logout,
+    auth
+}
 
 /**
  *
@@ -14,7 +27,7 @@ const base_sort: string = 'start'
  * @param {express.Request} req
  * @param {express.Response} res
  */
-export function find(req: express.Request, res: express.Response): void {
+function find(req: express.Request, res: express.Response): void {
     const limit = req.query.limit ? parseInt(req.query.limit) : base_limit
     const page = req.query.page ? parseInt(req.query.page) : base_page
     const skip = limit * (page - 1)
@@ -41,7 +54,7 @@ export function find(req: express.Request, res: express.Response): void {
  * @param {express.Response} res
  * @returns {Promise<void>}
  */
-export async function create(req: express.Request, res: express.Response): Promise<void> {
+async function create(req: express.Request, res: express.Response): Promise<void> {
     const name = req.body.name
     const email = req.body.email
     const password = req.body.password
@@ -64,7 +77,7 @@ export async function create(req: express.Request, res: express.Response): Promi
  * @param {express.Response} res
  * @returns {Promise<void>}
  */
-export async function detail(req: express.Request, res: express.Response): Promise<void> {
+async function detail(req: express.Request, res: express.Response): Promise<void> {
     try {
         const user = await User.findOne({ _id: req.params.id })
         res.send(user)
@@ -78,7 +91,7 @@ export async function detail(req: express.Request, res: express.Response): Promi
  * @param req
  * @param res
  */
-export async function update(req: express.Request, res: express.Response): Promise<void> {
+async function update(req: express.Request, res: express.Response): Promise<void> {
     if(req.session) {
         try {
             const id = req.body.id ? req.body.id : req.session!.id
@@ -98,7 +111,7 @@ export async function update(req: express.Request, res: express.Response): Promi
  * @param req
  * @param res
  */
-export async function remove(req: express.Request, res: express.Response): Promise<void> {
+async function remove(req: express.Request, res: express.Response): Promise<void> {
     try {
         await User.findByIdAndDelete({ _id: req.body.id })
         res.send({ message: 'Deleted' })
@@ -115,7 +128,7 @@ export async function remove(req: express.Request, res: express.Response): Promi
  * @param {express.Response} res
  * @returns {(Promise<void|boolean>)}
  */
-export async function login(req: express.Request, res: express.Response): Promise<void|boolean>  {
+async function login(req: express.Request, res: express.Response): Promise<void|boolean>  {
     const email = req.body.email
     const password = req.body.password
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
@@ -135,10 +148,14 @@ export async function login(req: express.Request, res: express.Response): Promis
                 try {
                     await User.updateOne({ _id: user!.id }, { lastLogin: new Date(), location: ip, active: true })
                     user = await User.findOne({ _id: user!.id }).select({ password: 0, active: 0, created: 0, __v: 0 })
-                    req.session!.userId = user!.id
-                    req.session!.userName = user!.name
-                    req.session!.userIp = ip
-                    res.send({ session: req.session!, user: user })
+                    if(user && req.headers.host)  {
+                        const JWTToken = JWTSign({ _id: user.id, host: req.headers.host! })
+                        res.send({
+                            success: true,
+                            user: user,
+                            token: JWTToken,
+                        })
+                    }
                 } catch (error) {
                     jsonHttpError(res, { code: 500, data: error })
                 }
@@ -155,12 +172,12 @@ export async function login(req: express.Request, res: express.Response): Promis
  * @param req
  * @param res
  */
-export async function logout(req: express.Request, res: express.Response): Promise<void> {
+async function logout(req: express.Request, res: express.Response): Promise<void> {
     req.session!.destroy((error) => {
         if(error) {
             jsonHttpError(res, { code: 500, data: error })
         } else {
-            res.redirect('/')
+            res.send({ logout: true })
         }
     })
 }
@@ -172,11 +189,17 @@ export async function logout(req: express.Request, res: express.Response): Promi
  * @param res
  * @param next
  */
-export function auth(req: express.Request, res: express.Response, next: NextFunction): void {
-    if(!req.session!.userId) {
-        req.session!.back = req.originalUrl;
-        res.redirect('/user/login')
-    } else {
-        next()
-    }
+function auth(req: express.Request, res: express.Response, next: NextFunction): void {
+    const token = req.headers['x-access-token']! || null
+    const id = req.headers['x-access-id']! || null
+    const host = req.headers.host
+    console.log(token)
+    // console.log(req)
+
+    if(!token || !id || !host) return jsonHttpError(res, { code: 401, data: { message: 'No token provided.' }})
+
+    const verified = JWTVerify(Array.isArray(token) ? token[0] : token, Array.isArray(id) ? id[0] : id, host)
+
+    if(verified) next()
+    else jsonHttpError(res, { code: 500, data: { message: 'Failed to authenticate token.' }})
 }

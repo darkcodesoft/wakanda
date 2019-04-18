@@ -8,10 +8,10 @@ router.get('/', dashboard)
 router.post('/register', create)
 router.post('/login', login)
 router.post('/logout', logout)
-router.get('/event', event)
-router.get('/event/:id', event)
-router.get('event/update', update) // secure
-router.get('/user', user)
-router.get('/user/:id', user)
+router.get('/event', auth, event)
+router.get('/event/:id', auth, event)
+router.get('event/update', auth, update) // secure
+router.get('/user', auth, user)
+router.get('/user/:id', auth, user)
 
 export default router
