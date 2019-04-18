@@ -21,7 +21,7 @@ const singOptions: jwt.SignOptions = {
     issuer: 'DarkCode Software Inc.',
     subject: '',
     audience: 'wkd-admin',
-    expiresIn: 60, // 24hr
+    expiresIn: 60 * 60 * 12, // 12hr
     algorithm: "RS256"
 }
 
