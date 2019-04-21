@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Model } from "mongoose"
+import mongoose from "mongoose"
 import { host, port, db } from './storage.json'
 
 const connectionURI = `${host}:${port}/${db}`

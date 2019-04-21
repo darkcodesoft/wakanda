@@ -57,7 +57,6 @@ export default class App {
         this.server.router.use((err:HttpError, req:express.Request, res:express.Response, next:express.NextFunction) => {
             res.locals.message = err.message
             res.locals.error = req.app.get('env') === 'development' ? err : {}
-
             jsonHttpError(res, { code: (err.status || 500), data: err })
         })
     }
