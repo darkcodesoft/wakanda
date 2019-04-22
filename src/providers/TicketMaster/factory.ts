@@ -56,13 +56,12 @@ export namespace Factory {
      * @returns {Item}
      */
     export function make(event: TicketMasterEvent): Item {
-        const source: Source = require('./source.json')
         const venue: TicketMasterVenue = event._embedded.venues[0]
 
         const item: Item = {
-            eventId: makeId(event.id, source.id),
+            eventId: makeId(event.id, 'ticketmaster'),
             sourceId: event.id,
-            source: source.id,
+            source: 'ticketmaster',
             name: event.name.trim(),
             location: {
                 type: "Point",

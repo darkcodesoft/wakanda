@@ -50,7 +50,7 @@ const EventSchema = new Schema({
     sourceId: String,
     source: String,
     name: { type: String, index: true, required: true },
-    info: { type: String, index: true },
+    info: { type: String },
     images: [ImageSchema],
     location: { type: LocationSchema, required: true },
     venue: VenueSchema,

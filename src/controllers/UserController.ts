@@ -45,7 +45,7 @@ class UserController extends ModelController {
      * @param {express.Response} res
      * @returns {(Promise<void|boolean>)}
      */
-    public async login(req: express.Request, res: express.Response): Promise<void|boolean>  {
+    public async login(req: express.Request, res: express.Response): Promise<void|boolean> {
         const email = req.body.email
         const password = req.body.password
         const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress

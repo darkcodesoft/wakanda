@@ -75,8 +75,8 @@ export default class ModelController {
      */
     public async create(req: express.Request, res: express.Response, _options?: any): Promise<void> {
         if(req.body || _options) {
-            const options = {...req.body, _options}
-            const model = await this.Service!.create(req.body)
+            const options = {...req.body, ..._options}
+            const model = await this.Service!.create(options)
             return this.reponse(res, model);
         } else {
             this.throw(res, 'Invalid request. No ID specified.')

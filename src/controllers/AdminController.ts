@@ -67,7 +67,7 @@ export async function user(req: express.Request, res: express.Response): Promise
  * @param {express.Request} req
  * @param {express.Response} res
  */
-export function update(req: express.Request, res: express.Response): void {
+export function mine(req: express.Request, res: express.Response): void {
     const process = fork(join(__dirname, '../../src/providers'), ['-r', 'ts-node/register'])
     console.log('Provider fetch started:' + new Date() )
     process.on('message', (msg) => {

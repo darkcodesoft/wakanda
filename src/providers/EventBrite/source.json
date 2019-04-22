@@ -1,8 +1,0 @@
-{
-    "id": "eventbrite",
-    "domain": "https://www.eventbriteapi.com/v3/events/search/",
-    "token": "BHKOZKMHPLU2XIR7AT3U",
-    "expand": "venue,organizer,category,subcategory,ticket_classes",
-    "location": "nyc",
-    "limit": 100
-}

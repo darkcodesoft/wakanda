@@ -1,204 +1,113 @@
-import { Item, Source, EventBriteSuccessResponse, EventBriteEvent } from '../../interfaces/Event'
-import { NativeRequest } from '../../addons/request';
-import { connection } from '../../storage/connection'
-import { Event } from '../../models/Event'
-import { id, domain, token, expand, location, limit } from './source.json'
+import BaseProvider from '../base'
 import { Factory } from './factory'
+import { Item, EventBriteEvent } from '../../interfaces/Event'
 
 /**
- * Define EventBrite Provider.
  *
- * @export
- * @class EventBrite
- * @implements {Source}
- * @implements {Storage}
+ *
+ * @class TicketMaster
+ * @extends {BaseProvider}
  */
-export default class EventBrite implements Source {
-
-    public id: string
-    public domain: string
-    public token: string
-    public limit: number
-    public location: string
-
-    private url: URL
-    private succeeded: Item[] = []
-    private failed: URL[] = []
-
-    private client: NativeRequest.Client = NativeRequest.Client
-    private page: number = 0
-
-    private static instance?: EventBrite|null = null;
+class EventBrite extends BaseProvider {
 
     /**
      *
      *
-     * @returns {number}
-     * @memberof EventBrite
+     * @protected
+     * @memberof TicketMaster
      */
-    public getPage(): number {
-        return this.page
-    }
+    protected id = 'eventbrite'
 
     /**
      *
      *
-     * @param {number} p
-     * @memberof EventBrite
+     * @protected
+     * @memberof TicketMaster
      */
-    public setPage(p: number): void {
-        this.page = p
-        this.url.searchParams.set('page', p.toString())
-    }
+    protected Factory = Factory
 
     /**
      *
      *
-     * @memberof EventBrite
+     * @protected
+     * @memberof TicketMaster
      */
-    public nextPage(): void {
-        this.page++
-        this.setPage(this.page)
-    }
-
-    /**
-     *
-     */
-    public previousPage(): void {
-        this.page--
-        this.setPage(this.page)
-    }
-
-    /**
-     *
-     *
-     * @returns {URL[]}
-     * @memberof EventBrite
-     */
-    public getFailed(): URL[] {
-        return this.failed
-    }
-
-    /**
-     *
-     *
-     * @returns {Item[]}
-     * @memberof EventBrite
-     */
-    public getSucceeded(): Item[] {
-        return this.succeeded
-    }
-
-    /**
-     *
-     *
-     * @static
-     * @returns {App}
-     * @memberof App
-     */
-    public static static(): EventBrite {
-        if(EventBrite.instance === null) {
-            EventBrite.instance = new EventBrite
-        }
-        return EventBrite.instance!;
-    }
-
-    /**
-     * Creates an instance of EventBrite
-     *
-     * @memberof EventBrite
-     */
-    constructor() {
-        // configure source
-        this.id = id
-        this.domain = domain
-        this.token = token
-        this.location = location
-        this.limit = limit
-
-        // configure url
-        this.url = new URL(domain)
-        this.url.searchParams.set('token', token)
-        this.url.searchParams.set('expand', expand)
-        this.url.searchParams.set('location.address', location)
-        this.url.searchParams.set('location.within', '300km')
-        this.url.searchParams.set('sort_by', 'date')
-    }
+    protected api = 'https://www.eventbriteapi.com/v3/events/search/'
 
     /**
      *
      *
      * @private
+     * @memberof TicketMaster
+     */
+    private token = 'BHKOZKMHPLU2XIR7AT3U'
+
+    /**
+     *
+     *
+     * @private
+     * @memberof TicketMaster
+     */
+    private expand = [
+        'venue',
+        'organizer',
+        'category',
+        'subcategory',
+        'ticket_classes',
+    ]
+
+    /**
+     *
+     *
+     * @private
+     * @memberof TicketMaster
+     */
+    private location = 'nyc'
+
+    /**
+     *
+     *
+     * @private
+     * @memberof TicketMaster
+     */
+    private distance = '300km'
+
+    /**
+     *
+     *
+     * @protected
+     * @memberof TicketMaster
+     */
+    protected limit = 100 // 100
+
+    /**
+     *
+     *
+     * @protected
+     * @memberof TicketMaster
+     */
+    protected configureUrl(): void {
+        super.configureUrl()
+        this.url!.searchParams.set('token', this.token)
+        this.url!.searchParams.set('expand', this.expand.join(','))
+        this.url!.searchParams.set('location.address', this.location)
+        this.url!.searchParams.set('location.within', this.distance)
+        this.url!.searchParams.set('sort_by', 'date')
+    }
+
+    /**
+     *
+     *
+     * @protected
      * @param {URL} url
-     * @param {EventBriteSuccessResponse} response
+     * @param {*} response
      * @memberof EventBrite
      */
-    private successHandler(url: URL, response: EventBriteSuccessResponse): void {
+    protected successHandler(url: URL, response: any): void {
         const events: EventBriteEvent[] = response.events
-        const collection: Item[] = Factory.collect(events)
+        const collection: Item[] = this.Factory!.collect(events)
         this.succeeded.push(...collection)
     }
-
-    /**
-     *
-     *
-     * @private
-     * @param {URL} url
-     * @param {Error} error
-     * @memberof EventBrite
-     */
-    private errorHandler(url: URL, error: Error): void {
-        this.failed.push(url)
-        console.error('ERROR: ' + url.href)
-        console.error(error)
-    }
-
-    /**
-     *
-     *
-     * @memberof EventBrite
-     */
-    public fetch(): void {
-        let n = 0
-        this.setPage(n)
-
-        do {
-            const result = this.client.request(this.url.href)
-            const json = JSON.parse(result)
-
-            if(!!json.fault || !!json.error) {
-                this.errorHandler(this.url, json)
-                this.store()
-                break
-            } else {
-                this.successHandler(this.url, json as EventBriteSuccessResponse)
-            }
-
-            n++
-            this.setPage(n)
-
-            if(n === this.limit) {
-                this.store()
-                break
-            }
-        } while(n <= this.limit)
-    }
-
-    /**
-     * Store provider data
-     *
-     * @memberof EventBrite
-     */
-    public store(): void {
-        Event.deleteMany({ source: this.id }, (err) => {
-            if(!err) {
-                Event.insertMany(this.succeeded, { ordered: false }, (err, docs) => {
-                    console.log(`!!! ${this.id} events insert success`)
-                    connection.close()
-                })
-            } else {
-                console.log(err)
-            }
-        })
-    }
 }
+
+export default new EventBrite
