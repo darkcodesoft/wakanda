@@ -79,5 +79,5 @@ export function mine(req: express.Request, res: express.Response): void {
         }
     })
 
-    res.send({ message: 'porcess started' })
+    res.send({ message: 'porcess started', timestamp: new Date() })
 }
