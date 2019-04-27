@@ -10,8 +10,8 @@ import { HttpResponseError } from '../lib/http'
 export interface ModelServiceInterface {
     find(options: any): Promise<Model<any>[] | HttpResponseError>
     findById(id: string): Promise<Model<any>|HttpResponseError>
-    create(options: any): Model<any|HttpResponseError>
-    update(options: any): Model<any|HttpResponseError>
+    create(options: any): Promise<Model<any>|HttpResponseError>
+    update(options: any): Promise<Model<any>|HttpResponseError>
     remove(id: string): Promise<boolean|HttpResponseError>
     count(): Promise<number|HttpResponseError>
 }
@@ -119,7 +119,7 @@ export default class ModelService implements ModelServiceInterface {
      * @returns {(Model<any|HttpResponseError>)}
      * @memberof ModelService
      */
-    public async create(options: any): Model<any|HttpResponseError> {
+    public async create(options: any): Promise<Model<any>|HttpResponseError> {
         try {
             const model = new this.Model!(options)
             await model.save()
@@ -136,10 +136,10 @@ export default class ModelService implements ModelServiceInterface {
      * @returns {(Model<any|HttpResponseError>)}
      * @memberof ModelService
      */
-    public async update(options: any): Model<any|HttpResponseError> {
+    public async update(options: any): Promise<Model<any>|HttpResponseError> {
         try {
             const id = options.id
-            const model = await this.Model!.findByIdAndUpdate(id, options.body)
+            const model = await this.Model!.findByIdAndUpdate(id, options)
             return model
         } catch(error) {
             return { code: 500, data: error } as HttpResponseError

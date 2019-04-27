@@ -9,7 +9,7 @@ const connectionURI = `${host}:${port}/${db}`
 export const connection = mongoose.createConnection(connectionURI, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: true
+    useFindAndModify: false
 })
 
 /**

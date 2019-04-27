@@ -1,6 +1,6 @@
 import express from 'express'
 import { jsonHttpError, parseFields } from '../lib/http'
-import { ModelServiceInterface } from "../services/model"
+import { ModelServiceInterface, } from "../services/model"
 
 /**
  *
