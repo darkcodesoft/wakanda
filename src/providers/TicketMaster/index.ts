@@ -93,6 +93,7 @@ class TicketMaster extends BaseProvider {
         const events: TicketMasterEvent[] = response._embedded.events
         const collection: Item[] = this.Factory!.collect(events)
         this.succeeded.push(...collection)
+        super.successHandler(url, response);
     }
 }
 

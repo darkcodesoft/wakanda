@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import crypto from 'crypto'
 import { name } from '../package.json'
-import { connection } from '../src/storage/connection'
 
 /**
  *
@@ -53,9 +52,8 @@ export default class Server {
         this.router = express.Router()
         this.process.use(this.router)
 
-        let port:number;
         if(!!process.env.PORT) {
-            port = parseInt(process.env.PORT)
+            const port = parseInt(process.env.PORT)
             this.setPort(port)
         }
     }

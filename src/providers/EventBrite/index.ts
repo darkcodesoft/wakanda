@@ -107,6 +107,7 @@ class EventBrite extends BaseProvider {
         const events: EventBriteEvent[] = response.events
         const collection: Item[] = this.Factory!.collect(events)
         this.succeeded.push(...collection)
+        super.successHandler(url, response);
     }
 }
 

@@ -1,4 +1,4 @@
-import { index, event, user, mine } from '../../src/controllers/AdminController'
+import { index, event, user, mine, socket } from '../../src/controllers/AdminController'
 import UserController from '../../src/controllers/UserController'
 import EventController from '../../src/controllers/EventController'
 import express from 'express'
@@ -33,5 +33,7 @@ router.get('/user/:id', UserController.auth, user)
 
 
 router.get('/mine', UserController.auth, mine)
+
+router.get('/socket/:message', socket)
 
 export default router
