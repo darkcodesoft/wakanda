@@ -12,7 +12,10 @@ export interface JSONMessage {
  * @export
  * @class SocketClass
  */
-export class WebSocketServer {
+export default class WebSocketServer {
+
+
+	private static instance?:WebSocketServer|null = null
 
     /**
      *
@@ -21,6 +24,21 @@ export class WebSocketServer {
      * @memberof SocketClass
      */
     public server: WebSocket.Server
+
+	/**
+     * Get WebSocketServer  static instance
+     *
+     * @static
+     * @returns
+     * @memberof WebSocketServer
+     */
+    public static static(): WebSocketServer {
+		if(WebSocketServer.instance === null){
+			const port = server.static().getPort() + 1
+			WebSocketServer.instance = new WebSocketServer(port)
+		}
+		return WebSocketServer.instance!
+	}
 
     /**
      *Creates an instance of SocketClass.
@@ -55,6 +73,3 @@ export class WebSocketServer {
         this.send(encoded)
     }
 }
-
-const port = server.static().getPort() + 1
-export default new WebSocketServer(port)

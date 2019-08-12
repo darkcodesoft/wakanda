@@ -73,10 +73,10 @@ export function mine(req: express.Request, res: express.Response): void {
     process.on('message', async (msg) => {
         if(msg.status === 200) {
             console.log('MINING_SUCCESS:' + new Date())
-            Socket.json({ message: 'MINING_SUCCESS', data: await EventService.count() })
+            Socket.static().json({ message: 'MINING_SUCCESS', data: await EventService.count() })
         } else {
             console.log('MINING_ERROR:' + new Date())
-            Socket.json({ message: 'MINING_ERROR', data: msg})
+            Socket.static().json({ message: 'MINING_ERROR', data: msg})
         }
     })
 
@@ -85,6 +85,6 @@ export function mine(req: express.Request, res: express.Response): void {
 
 export async function socket(req: express.Request, res: express.Response): Promise<void> {
     const message = req.params.message ? req.params.message : 'MESSAGE'
-    Socket.send(JSON.stringify({ message: message }))
+	Socket.static().send(JSON.stringify({ message: message }))
     res.json(message)
 }

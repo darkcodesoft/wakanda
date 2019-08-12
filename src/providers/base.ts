@@ -174,7 +174,7 @@ export default class BaseProvider {
      * @memberof TicketMaster
      */
     protected successHandler(url: URL, response: any): void {
-        Socket.send(JSON.stringify({ message: 'FETCH_SUCCESS', url: url, response: response }))
+    	Socket.static().send(JSON.stringify({ message: 'FETCH_SUCCESS', url: url, response: response }))
     }
 
     /**
@@ -189,7 +189,7 @@ export default class BaseProvider {
         this.failed.push(url)
         console.error('ERROR: ' + url.href)
         console.error(error)
-        Socket.json({ message: 'FETCH_ERROR', data: error })
+    	Socket.static().json({ message: 'FETCH_ERROR', data: error })
     }
 
     /**
@@ -232,17 +232,17 @@ export default class BaseProvider {
      * @memberof BaseProvider
      */
     protected async store(): Promise<boolean|any> {
-        try {
+		try {
             await Event.deleteMany({ source: this.id })
             const result = await Event.insertMany(this.succeeded, { ordered: false })
             await MineJob.deleteMany({ mineId: this.id })
             await new MineJob({ mineId: this.id, count: result.length, timestamp: new Date().toISOString() }).save()
             console.log(`!!! ${this.id} fetch success: ${result.length}`)
-            Socket.send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
+            Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
             connection.close()
         } catch(e) {
             console.log(e)
-            Socket.json({ message: 'PROVIDER_ERROR', data: e })
+            Socket.static().json({ message: 'PROVIDER_ERROR', data: e })
         }
     }
 }
