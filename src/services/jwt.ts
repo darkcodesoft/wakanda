@@ -16,10 +16,10 @@ export interface JWTPayload {
 }
 
 /**
- * singOptions config
+ * signatureOptions config
  * @type jwt.SignOptions
  */
-const singOptions: jwt.SignOptions = {
+const signatureOptions: jwt.SignOptions = {
     issuer: 'DarkCode Software Inc.',
     subject: '',
     audience: 'wkd-admin',
@@ -43,9 +43,9 @@ const verifyOptions: jwt.VerifyOptions = {
  * @return jwt.sign method
  */
 export function JWTSign(payload: JWTPayload) {
-    singOptions.subject = payload._id;
-    singOptions.audience = payload.host;
-    return jwt.sign(payload, PRIVATE_KEY, singOptions)
+    signatureOptions.subject = payload._id;
+    signatureOptions.audience = payload.host;
+    return jwt.sign(payload, PRIVATE_KEY, signatureOptions)
 }
 
 /**
