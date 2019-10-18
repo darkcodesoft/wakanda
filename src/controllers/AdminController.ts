@@ -83,6 +83,12 @@ export function mine(req: express.Request, res: express.Response): void {
     res.send({ message: 'porcess started', timestamp: new Date() })
 }
 
+/**
+ * @export
+ * socket endpoint
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
 export async function socket(req: express.Request, res: express.Response): Promise<void> {
     const message = req.params.message ? req.params.message : 'MESSAGE'
 	Socket.static().send(JSON.stringify({ message: message }))
