@@ -9,7 +9,7 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "start": "npm run test && npm run build && node ./build/Release/wakanda.js --port=3001",
+    "start": "npm run test && npm run build && pm2-runtime start ./build/Release/wakanda.js -- --port 3001",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
     "build": "npm run build:c++ && npm run build:ts",
     "build:ts": "webpack",

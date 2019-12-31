@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import { host, port, db } from './storage.json'
+import { host, port, db, username, password } from './storage.json'
 
-const connectionURI = `${host}:${port}/${db}`
-
+const connectionURI = `mongodb://${host}:${port}/${db}`
+console.log(connectionURI)
 /**
  * Configure and export database connection
  */

@@ -1,5 +1,7 @@
 {
-    "host": "mongodb://localhost",
+    "host": "mongo",
     "port": "27017",
-    "db": "wakanda"
+    "db": "wakanda",
+    "username": "fluffy",
+    "password": "sal"
 }
