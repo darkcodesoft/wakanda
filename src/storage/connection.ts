@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 import { host, port, db, username, password } from './storage.json'
 
 const connectionURI = `mongodb://${host}:${port}/${db}`
-console.log(connectionURI)
+
 /**
  * Configure and export database connection
  */

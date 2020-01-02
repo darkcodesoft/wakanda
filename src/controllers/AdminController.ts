@@ -1,6 +1,6 @@
 import express from 'express'
 import Socket from '../../public/socket'
-import { fork } from 'child_process'
+import { spawn } from 'child_process'
 import { join } from 'path'
 import EventService from '../services/event'
 import UserService from '../services/user'
@@ -68,14 +68,14 @@ export async function user(req: express.Request, res: express.Response): Promise
  * @param {express.Response} res
  */
 export function mine(req: express.Request, res: express.Response): void {
-    const process = fork(join(__dirname, '../../src/providers'), ['-r', 'ts-node/register'])
-    console.log('Provider fetch started:' + new Date() )
-    process.on('message', async (msg) => {
+    const child = spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')])
+    console.log('[i] Provider fetch started:' + new Date() )
+    child.on('message', async (msg) => {
         if(msg.status === 200) {
-            console.log('MINING_SUCCESS:' + new Date())
+            console.log('[+] MINING_SUCCESS:' + new Date())
             Socket.static().json({ message: 'MINING_SUCCESS', data: await EventService.count() })
         } else {
-            console.log('MINING_ERROR:' + new Date())
+            console.log('[-] MINING_ERROR:' + new Date())
             Socket.static().json({ message: 'MINING_ERROR', data: msg})
         }
     })

@@ -17,7 +17,7 @@ import { name } from '../package.json'
 export default class Server {
 
     private static instance?:Server|null = null
-    private port: number = 3000
+    private port: number = 3001
     private ports: number[] = []
     private cookieSecret: string
 
@@ -73,9 +73,9 @@ export default class Server {
         // add coockie parser
         this.process.use(cookieParser(this.cookieSecret))
         // setup public directory
-        this.process.use(express.static(path.join(__dirname, 'public')))
+        this.process.use(express.static(path.join(process.cwd(), 'public')))
         // setup views directory
-        this.process.set('views', path.join(__dirname, 'views'))
+        this.process.set('views', path.join(process.cwd(), 'views'))
         // setup view engine
         this.process.set('view engine', 'pug')
     }
@@ -151,19 +151,15 @@ export default class Server {
      * @memberof Server
      */
     public start(): void {
-        const port:number = this.getPort()
-        this.process.listen(port, () => {
-            console.log(`Server started @ port: ${port}`)
-        })
-        // const port: number = this.getPort()
-        // const options: spdy.ServerOptions = {
-        //     key: fs.readFileSync(path.join(__dirname, 'certificate/server.key'), 'utf8'),
-        //     cert: fs.readFileSync(path.join(__dirname, 'certificate/server.crt'), 'utf8')
-        // }
+         const port: number = this.getPort()
+         const options: spdy.ServerOptions = {
+             key: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.key'), 'utf8'),
+             cert: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.crt'), 'utf8')
+         }
 
-        // spdy.createServer(options, this.process).listen(port, (err: any) => {
-        //     if (err) throw new Error(err)
-        //     console.log(`Server started @ port: ${port}`)
-        // });
+         spdy.createServer(options, this.process).listen(port, (err: any) => {
+             if (err) throw new Error(err)
+             console.log(`[i] Server started @ port: ${port}`)
+         });
     }
 }

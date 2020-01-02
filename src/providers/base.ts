@@ -1,9 +1,9 @@
 import { Item } from '../interfaces/Event'
-import { NativeRequest } from '../addons/request'
 import { connection } from '../storage/connection'
 import { Event } from '../models/Event'
 import { MineJob } from '../models/Job'
 import Socket from '../../public/socket';
+import axios from 'axios'
 
 /**
  *
@@ -88,15 +88,6 @@ export default class BaseProvider {
     /**
      *
      *
-     * @protected
-     * @type {NativeRequest.Client}
-     * @memberof BaseProvider
-     */
-    protected client: NativeRequest.Client = NativeRequest.Client
-
-    /**
-     *
-     *
      * @returns {number}
      * @memberof TicketMaster
      */
@@ -174,7 +165,8 @@ export default class BaseProvider {
      * @memberof TicketMaster
      */
     protected successHandler(url: URL, response: any): void {
-    	Socket.static().send(JSON.stringify({ message: 'FETCH_SUCCESS', url: url, response: response }))
+        console.log('[+] SUCCESS: ' + url.href)
+        Socket.static().send(JSON.stringify({ message: 'FETCH_SUCCESS', url: url, response: response }))
     }
 
     /**
@@ -187,9 +179,9 @@ export default class BaseProvider {
      */
     protected errorHandler(url: URL, error: Error): void {
         this.failed.push(url)
-        console.error('ERROR: ' + url.href)
+        console.error('[-] ERROR: ' + url.href)
         console.error(error)
-    	Socket.static().json({ message: 'FETCH_ERROR', data: error })
+        Socket.static().json({ message: 'FETCH_ERROR', data: error })
     }
 
     /**
@@ -197,14 +189,14 @@ export default class BaseProvider {
      *
      * @memberof TicketMaster
      */
-    public fetch(): void {
+    public async fetch(): Promise<void> {
         let n = this.page
         this.configureUrl()
         this.setPage(n)
 
         do {
-            const result = this.client.request(this.url!.href)
-            const json = JSON.parse(result)
+            const result = await axios.get(this.url!.href)
+            const json = result.data
 
             if(!!json.fault || !!json.error) {
                 this.errorHandler(this.url!, json)
@@ -232,12 +224,12 @@ export default class BaseProvider {
      * @memberof BaseProvider
      */
     protected async store(): Promise<boolean|any> {
-		try {
+        try {
             await Event.deleteMany({ source: this.id })
             const result = await Event.insertMany(this.succeeded, { ordered: false })
             await MineJob.deleteMany({ mineId: this.id })
             await new MineJob({ mineId: this.id, count: result.length, timestamp: new Date().toISOString() }).save()
-            console.log(`!!! ${this.id} fetch success: ${result.length}`)
+            console.log(`[+] ${this.id} fetch success: ${result.length}`)
             Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
             connection.close()
         } catch(e) {
