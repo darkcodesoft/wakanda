@@ -57,13 +57,12 @@ export namespace Factory {
      * @returns {Item}
      */
     export function make(event: EventBriteEvent): Item {
-        const source: Source = require('./source.json')
         const venue: EventBriteVenue = event.venue
 
         const item: Item = {
-            eventId: makeId(event.id, source.id),
+            eventId: makeId(event.id, "eventbrite"),
             sourceId: event.id,
-            source: source.id,
+            source: "eventbrite",
             name: makeText(event.name.text),
             location: {
                 type: "Point",

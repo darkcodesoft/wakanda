@@ -1,7 +1,7 @@
-import mongoose, { Document, Schema, Model } from "mongoose"
-import { host, port, db } from './storage.json'
+import mongoose from "mongoose"
+import { host, port, db, username, password } from './storage.json'
 
-const connectionURI = `${host}:${port}/${db}`
+const connectionURI = `mongodb://${host}:${port}/${db}`
 
 /**
  * Configure and export database connection
@@ -9,7 +9,7 @@ const connectionURI = `${host}:${port}/${db}`
 export const connection = mongoose.createConnection(connectionURI, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: true
+    useFindAndModify: false
 })
 
 /**

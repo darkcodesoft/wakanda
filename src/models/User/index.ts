@@ -14,7 +14,7 @@ export interface User {
 
 // Configure and export UserModel type
 export interface UserModel extends User, Document {
-    comparePassword(candidatePassword: string, cb: (error:any, isMatch?: boolean) => void): void
+    comparePassword(password: string ): Promise<boolean>
 }
 
 // Configure Role sub-Schema
@@ -58,12 +58,9 @@ UserSchema.pre('save', function(next: HookNextFunction) {
 })
 
 // configure bcrypt passwords compare method
-UserSchema.methods.comparePassword = function(candidatePassword: string, cb: (error:any, isMatch?: boolean) => void): void {
-    const user = this as UserModel
-    bcrypt.compare(candidatePassword, user.password, (err, isMatch) => {
-        if (err) return cb(err)
-        cb(null, isMatch)
-    })
+UserSchema.methods.comparePassword = async function(password: string): Promise<boolean> {
+    const match = await bcrypt.compare(password, this.password)
+    return match
 }
 
 // validators

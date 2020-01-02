@@ -1,0 +1,29 @@
+version: "2"
+services:
+  wapi:
+    build: .
+    depends_on:
+      - mongo
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3001:3001"
+    command: npm run start
+ 
+  mongo:
+    image: "mongo:4.2.2-bionic"
+    restart: always
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: "mongo-express:0.49.0"
+    restart: always
+    depends_on: 
+      - mongo
+    ports:
+      - "8081:8081"
+

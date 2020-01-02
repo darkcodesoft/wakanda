@@ -1,29 +1,34 @@
-import { User, UserModel } from '../models/User'
-import { Event, EventModel } from '../models/Event'
 import express from 'express'
-import { jsonHttpError, parseFields } from '../lib/http'
-import { fork } from 'child_process'
+import Socket from '../../public/socket'
+import { spawn } from 'child_process'
 import { join } from 'path'
+import EventService from '../services/event'
+import UserService from '../services/user'
+import ModelController from '../../src/controllers/ModelController'
+
+const modelController = new ModelController
 
 /**
  *
- * @param req
- * @param res
+ * @todo
+ * @export
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
  */
-export async function dashboard(req: express.Request, res: express.Response): Promise<void> {
-    const eventCount = await Event.count({})
-    const userCount = await User.count({})
+export async function index(req: express.Request, res: express.Response): Promise<void> {
+
     // should be getting data from Jobs Model
     res.send({
         'updated': new Date(),
         'models':[
             {
                 'name': 'user',
-                'count': userCount,
+                'count': await UserService.count(),
             },
             {
                 'name': 'event',
-                'count': eventCount,
+                'count': await EventService.count(),
             }
         ]
     })
@@ -35,43 +40,11 @@ export async function dashboard(req: express.Request, res: express.Response): Pr
  * @export
  * @param {express.Request} req
  * @param {express.Response} res
+ * @returns {Promise<any>}
  */
-export async function event(req: express.Request, res: express.Response): Promise<void> {
-    if(req.params.id) {
-        try {
-            const event = await Event.findOne({ _id: req.params.id })
-            res.send(event)
-        } catch(error) {
-            jsonHttpError(res, { code: 404, data: error })
-        }
-    } else {
-        const now = new Date().toISOString()
-        const fields = req.query.fields ? parseFields(req.query.fields) : {}
-        const limit = req.query.limit ? parseInt(req.query.limit) : 25
-        const page = req.query.page ? parseInt(req.query.page) : 1
-        const skip = limit * (page - 1)
-        const sort = req.query.sort ? req.query.sort : 'start'
-        const search = req.query.search ? req.query.search.toString() : null
-
-        let query =  {}
-        if(!!search) {
-            query = {$text: {$search: search}}
-        }
-
-        Event.find(query).
-            skip(skip).
-            limit(limit).
-            sort(sort).
-            select(fields).
-            where({}).
-            exec().
-            then((events) => {
-                res.send(events)
-            }).
-            catch((error) => {
-                jsonHttpError(res, { code: 404, data: error })
-            })
-    }
+export async function event(req: express.Request, res: express.Response): Promise<any> {
+    modelController.Service = EventService
+    return modelController.find(req, res)
 }
 
 /**
@@ -80,62 +53,44 @@ export async function event(req: express.Request, res: express.Response): Promis
  * @export
  * @param {express.Request} req
  * @param {express.Response} res
+ * @returns {Promise<void>}
  */
 export async function user(req: express.Request, res: express.Response): Promise<void> {
-    if(req.params.id) {
-        try {
-            const user = await User.findOne({ _id: req.params.id })
-            res.send(user)
-        } catch(error) {
-            jsonHttpError(res, { code: 404, data: error })
-        }
-    } else {
-        const fields = { name: 1 }
-        const limit = req.query.limit ? parseInt(req.query.limit) : 25
-        const page = req.query.page ? parseInt(req.query.page) : 1
-        const skip = limit * (page - 1)
-        const sort = 'name'
-        const search = req.query.search ? req.query.search.toString() : null
-
-        let query =  {}
-        if(!!search) {
-            query = {$text: {$search: search}}
-        }
-
-        User.find(query).
-            skip(skip).
-            limit(limit).
-            sort(sort).
-            select(fields).
-            where({}).
-            exec().
-            then((users) => {
-                res.send(users)
-            }).
-            catch((error) => {
-                jsonHttpError(res, { code: 404, data: error })
-            })
-    }
+    modelController.Service = UserService
+    return modelController.find(req, res)
 }
 
 /**
  *
- *
+ * @todo
  * @export
  * @param {express.Request} req
  * @param {express.Response} res
  */
-export function update(req: express.Request, res: express.Response): void {
-    const process = fork(join(__dirname, '../../src/providers'), ['-r', 'ts-node/register'])
-    console.log('Provider fetch started:' + new Date() )
-    process.on('message', (msg) => {
+export function mine(req: express.Request, res: express.Response): void {
+    const child = spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')])
+    console.log('[i] Provider fetch started:' + new Date() )
+    child.on('message', async (msg) => {
         if(msg.status === 200) {
-            console.log('Provider fetch completed:' + new Date())
+            console.log('[+] MINING_SUCCESS:' + new Date())
+            Socket.static().json({ message: 'MINING_SUCCESS', data: await EventService.count() })
         } else {
-            console.log('Provider fetch error:' + new Date())
-            console.log(msg)
+            console.log('[-] MINING_ERROR:' + new Date())
+            Socket.static().json({ message: 'MINING_ERROR', data: msg})
         }
     })
 
-    res.send({ message: 'porcess started' })
+    res.send({ message: 'porcess started', timestamp: new Date() })
+}
+
+/**
+ * @export
+ * socket endpoint
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export async function socket(req: express.Request, res: express.Response): Promise<void> {
+    const message = req.params.message ? req.params.message : 'MESSAGE'
+	Socket.static().send(JSON.stringify({ message: message }))
+    res.json(message)
 }

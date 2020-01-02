@@ -2,16 +2,12 @@ import express from 'express'
 import spdy from 'spdy'
 import fs from 'fs'
 import cors from 'cors'
-import { enableCors } from './cors'
-import session from 'express-session'
+import { domains } from './cors.json'
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import crypto from 'crypto'
 import { name } from '../package.json'
-import { connection } from '../src/storage/connection'
-
-const MongoStore = require('connect-mongo')(session)
 
 /**
  *
@@ -21,7 +17,7 @@ const MongoStore = require('connect-mongo')(session)
 export default class Server {
 
     private static instance?:Server|null = null
-    private port: number = 3000
+    private port: number = 3001
     private ports: number[] = []
     private cookieSecret: string
 
@@ -56,9 +52,8 @@ export default class Server {
         this.router = express.Router()
         this.process.use(this.router)
 
-        let port:number;
         if(!!process.env.PORT) {
-            port = parseInt(process.env.PORT)
+            const port = parseInt(process.env.PORT)
             this.setPort(port)
         }
     }
@@ -68,26 +63,7 @@ export default class Server {
      * @returns void
      */
     private setupMiddleWares(): void {
-        var whitelist = [
-            'https://localhost:8080',
-            'http://192.168.0.20:8080/',
-            'http://192.168.0.20:8080/',
-            'https://dev.loosey.com:8080',
-            'http://dev.loosey.com:8080'
-        ]
-
-        var corsOptionsDelegate = function (req:any, callback:any) {
-            var corsOptions;
-            if (whitelist.indexOf(req.header('Origin')) !== -1) {
-              corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-            } else {
-              corsOptions = { origin: true } // disable CORS for this request
-            }
-            callback(null, corsOptions) // callback expects two parameters: error and options
-        }
-
-        this.process.use(cors(corsOptionsDelegate))
-        // this.process.use(enableCors())
+        this.process.use(this.corsSetup())
         // add http logger
         this.process.use(logger('dev'))
         // add json
@@ -96,18 +72,10 @@ export default class Server {
         this.process.use(express.urlencoded({ extended: false }))
         // add coockie parser
         this.process.use(cookieParser(this.cookieSecret))
-        // add session middleware
-        this.process.use(session({
-            secret: this.cookieSecret,
-            resave: false,
-            saveUninitialized: true,
-            store: new MongoStore({ mongooseConnection: connection }),
-            cookie: { maxAge: 60000 }
-        }))
         // setup public directory
-        this.process.use(express.static(path.join(__dirname, 'public')))
+        this.process.use(express.static(path.join(process.cwd(), 'public')))
         // setup views directory
-        this.process.set('views', path.join(__dirname, 'views'))
+        this.process.set('views', path.join(process.cwd(), 'views'))
         // setup view engine
         this.process.set('view engine', 'pug')
     }
@@ -162,24 +130,36 @@ export default class Server {
     }
 
     /**
+     * CORS setup
+     * @returns Function
+     */
+    private corsSetup() {
+        return cors((req, callback) => {
+            let config
+            if(domains.indexOf(req.header('Origin')!) !== -1) {
+                config = { origin: true }
+            } else {
+                config = { origin: false }
+            }
+            callback( null, config )
+        })
+    }
+
+    /**
      * Start server
      *
      * @memberof Server
      */
     public start(): void {
-        const port:number = this.getPort()
-        this.process.listen(port, () => {
-            console.log(`Server started @ port: ${port}`)
-        })
-        // const port: number = this.getPort()
-        // const options: spdy.ServerOptions = {
-        //     key: fs.readFileSync(path.join(__dirname, 'certificate/server.key'), 'utf8'),
-        //     cert: fs.readFileSync(path.join(__dirname, 'certificate/server.crt'), 'utf8')
-        // }
+         const port: number = this.getPort()
+         const options: spdy.ServerOptions = {
+             key: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.key'), 'utf8'),
+             cert: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.crt'), 'utf8')
+         }
 
-        // spdy.createServer(options, this.process).listen(port, (err: any) => {
-        //     if (err) throw new Error(err)
-        //     console.log(`Server started @ port: ${port}`)
-        // });
+         spdy.createServer(options, this.process).listen(port, (err: any) => {
+             if (err) throw new Error(err)
+             console.log(`[i] Server started @ port: ${port}`)
+         });
     }
 }

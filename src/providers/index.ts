@@ -1,9 +1,9 @@
 import TicketMaster from './TicketMaster'
-import EventBrite from './EventBrite'
+//import EventBrite from './EventBrite'
 
 try {
-    TicketMaster.static().fetch()
-    EventBrite.static().fetch()
+    TicketMaster.fetch()
+    // EventBrite.fetch()
 
     if(process.send) {
         process.send({ status: 200 })

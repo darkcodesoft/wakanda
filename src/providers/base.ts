@@ -1,0 +1,240 @@
+import { Item } from '../interfaces/Event'
+import { connection } from '../storage/connection'
+import { Event } from '../models/Event'
+import { MineJob } from '../models/Job'
+import Socket from '../../public/socket';
+import axios from 'axios'
+
+/**
+ *
+ *
+ * @export
+ * @class BaseProvider
+ */
+export default class BaseProvider {
+
+    /**
+     *
+     *
+     * @protected
+     * @type {string}
+     * @memberof BaseProvider
+     */
+    protected api?: string = undefined
+
+    /**
+     *
+     *
+     * @protected
+     * @type {string}
+     * @memberof BaseProvider
+     */
+    protected id?: string = undefined
+
+    /**
+     *
+     *
+     * @protected
+     * @type {URL}
+     * @memberof BaseProvider
+     */
+    protected url?: URL = undefined
+
+    /**
+     * Base start page
+     *
+     * @protected
+     * @type {number}
+     * @memberof BaseProvider
+     */
+    protected page: number = 1
+
+    /**
+     *
+     *
+     * @protected
+     * @type {number}
+     * @memberof BaseProvider
+     */
+    protected limit?: number = undefined
+
+    /**
+     *
+     *
+     * @protected
+     * @type {Item[]}
+     * @memberof BaseProvider
+     */
+    protected succeeded: Item[] = []
+
+    /**
+     *
+     *
+     * @protected
+     * @type {URL[]}
+     * @memberof BaseProvider
+     */
+    protected failed: URL[] = []
+
+    /**
+     *
+     *
+     * @protected
+     * @type {*}
+     * @memberof BaseProvider
+     */
+    protected Factory?: any = undefined
+
+    /**
+     *
+     *
+     * @returns {number}
+     * @memberof TicketMaster
+     */
+    protected getPage(): number {
+        return this.page
+    }
+
+    /**
+     *
+     *
+     * @param {number} p
+     * @memberof TicketMaster
+     */
+    protected setPage(p: number): void {
+        this.page = p
+        this.url!.searchParams.set('page', p.toString())
+    }
+
+    /**
+     *
+     *
+     * @memberof TicketMaster
+     */
+    protected nextPage(): void {
+        this.page++
+        this.setPage(this.page)
+    }
+
+    /**
+     *
+     *
+     * @memberof TicketMaster
+     */
+    protected previousPage(): void {
+        this.page--
+        this.setPage(this.page)
+    }
+
+    /**
+     *
+     *
+     * @returns {URL[]}
+     * @memberof TicketMaster
+     */
+    protected getFailed(): URL[] {
+        return this.failed
+    }
+
+    /**
+     *
+     *
+     * @returns {TicketMasterEvent[]}
+     * @memberof TicketMaster
+     */
+    protected getSucceeded(): Item[] {
+        return this.succeeded
+    }
+
+    /**
+     *
+     *
+     * @protected
+     * @memberof BaseProvider
+     */
+    protected configureUrl() {
+        this.url = new URL(this.api!)
+    }
+
+    /**
+     *
+     *
+     * @private
+     * @param {URL} url
+     * @param {any} response
+     * @memberof TicketMaster
+     */
+    protected successHandler(url: URL, response: any): void {
+        console.log('[+] SUCCESS: ' + url.href)
+        Socket.static().send(JSON.stringify({ message: 'FETCH_SUCCESS', url: url, response: response }))
+    }
+
+    /**
+     * Api error reponse handler
+     *
+     * @private
+     * @param {URL} url
+     * @param {Error} error
+     * @memberof TicketMaster
+     */
+    protected errorHandler(url: URL, error: Error): void {
+        this.failed.push(url)
+        console.error('[-] ERROR: ' + url.href)
+        console.error(error)
+        Socket.static().json({ message: 'FETCH_ERROR', data: error })
+    }
+
+    /**
+     *
+     *
+     * @memberof TicketMaster
+     */
+    public async fetch(): Promise<void> {
+        let n = this.page
+        this.configureUrl()
+        this.setPage(n)
+
+        do {
+            const result = await axios.get(this.url!.href)
+            const json = result.data
+
+            if(!!json.fault || !!json.error) {
+                this.errorHandler(this.url!, json)
+                this.store()
+                break
+            } else {
+                this.successHandler(this.url!, json)
+            }
+
+            n++
+            this.setPage(n)
+
+            if(n === this.limit) {
+                this.store()
+                break
+            }
+        } while(n <= this.limit!)
+    }
+
+    /**
+     *
+     *
+     * @protected
+     * @returns {(Promise<boolean|any>)}
+     * @memberof BaseProvider
+     */
+    protected async store(): Promise<boolean|any> {
+        try {
+            await Event.deleteMany({ source: this.id })
+            const result = await Event.insertMany(this.succeeded, { ordered: false })
+            await MineJob.deleteMany({ mineId: this.id })
+            await new MineJob({ mineId: this.id, count: result.length, timestamp: new Date().toISOString() }).save()
+            console.log(`[+] ${this.id} fetch success: ${result.length}`)
+            Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
+            connection.close()
+        } catch(e) {
+            console.log(e)
+            Socket.static().json({ message: 'PROVIDER_ERROR', data: e })
+        }
+    }
+}
