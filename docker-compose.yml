@@ -18,12 +18,3 @@ services:
       - ./data:/data/db
     ports:
       - "27017:27017"
-
-  mongo-express:
-    image: "mongo-express:0.49.0"
-    restart: always
-    depends_on: 
-      - mongo
-    ports:
-      - "8081:8081"
-
