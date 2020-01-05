@@ -16,7 +16,7 @@ RUN npm install pm2@4.2.1 -g
 COPY package.json .
 
 # install npm modules + clean npm cache
-RUN npm install && npm cache clean
+RUN npm install
 
 # Copy root to docker root
 COPY . .
