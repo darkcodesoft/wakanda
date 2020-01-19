@@ -79,6 +79,7 @@ class TicketMaster extends BaseProvider {
         this.url!.searchParams.set('marketId', this.marketId.toString())
         this.url!.searchParams.set('startDateTime', new Date().toISOString().split('.')[0] + 'Z')
         this.url!.searchParams.set('sort', 'date,asc')
+        this.url!.searchParams.set('classificationName', 'music,movies,film,cinema,dance,sports') // should be set by user preference
     }
 
     /**
