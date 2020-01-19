@@ -7,12 +7,12 @@ const urlEncodeParser = bodyParser.urlencoded({ extended: false })
 const router = express.Router()
 
 // get
-router.get('/', UserController.auth, (req, res) => {
+router.get('/', (req, res) => {
     EventController.find(req, res)
 })
 
 // get by id
-router.get('/:id', UserController.auth, (req, res) => {
+router.get('/:id', (req, res) => {
     EventController.find(req, res)
 })
 
