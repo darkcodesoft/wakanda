@@ -79,6 +79,7 @@ class TicketMaster extends BaseProvider {
         'dance',
         'sports'
     ]
+
     /**
      *
      *
