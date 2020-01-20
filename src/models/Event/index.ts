@@ -14,20 +14,22 @@ const LocationSchema = new Schema({
 // Configure Promoter sub-schema
 const PromoterSchema = new Schema({
     id: String,
-    name: { type: String, index: true }
+    name: String
 }, { _id : false })
 
 // Configure Venue sub-schema
 const VenueSchema = new Schema({
     id: String,
-    name: { type: String, index: true },
-    city: { type: String, index: true },
-    region: { type: String, index: true },
-    country: { type: String, index: true },
-    address: { type: String, index: true },
-    zipcode: String,
+    name: { type: String, text: true },
+    city: { type: String, text: true },
+    region: { type: String, text: true },
+    country: { type: String, text: true },
+    address: { type: String, text: true },
+    zipcode: { type: String, text: true },
     location: { type: LocationSchema, required: true}
 }, { _id : false })
+
+VenueSchema.index({ name: 'text', city: 'text', region: 'text', country: 'text', address: 'text', zipcode: 'text'  })
 
 // Configure Image sub-schema
 const ImageSchema = new Schema({
@@ -46,22 +48,24 @@ const PriceSchema = new Schema({
 
 // Configure Event schema
 const EventSchema = new Schema({
-    eventId : { type: String, index: true, unique: true },
+    eventId : { type: String, unique: true },
     sourceId: String,
     source: String,
-    name: { type: String, index: true, required: true },
-    info: { type: String },
+    name: { type: String, text:true, required: true },
+    info: { type: String, text: true },
     images: [ImageSchema],
     location: { type: LocationSchema, required: true },
     venue: VenueSchema,
     start: { type: Date, required: true},
     end: Date,
-    tags: { type:[String], index: true },
+    tags: { type:[String], text: true },
     promoter: PromoterSchema,
     url: String,
     active: { type: Boolean, default: true },
     price: PriceSchema
 })
+
+EventSchema.index({ name: 'text', info: 'text', tags: 'text' })
 
 // Export Event model
 export const Event: Model<EventModel> = connection.model<EventModel>("Event", EventSchema)
