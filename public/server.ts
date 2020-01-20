@@ -74,6 +74,8 @@ export default class Server {
         this.process.use(cookieParser(this.cookieSecret))
         // setup public directory
         this.process.use(express.static(path.join(process.cwd(), 'public')))
+        // hide x-powered-by
+        this.process.disable('x-powered-by')
         // setup views directory
         this.process.set('views', path.join(process.cwd(), 'views'))
         // setup view engine
