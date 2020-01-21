@@ -31,7 +31,7 @@ export default class ModelController {
     public async find(req: express.Request, res: express.Response, _options?: any): Promise<void> {
         if(req.params.id) {
             const model = await this.Service!.findById(req.params.id)
-            return this.reponse(res, model);
+            return this.response(res, model);
         } else if(req.query || _options) {
             const options = {...req.query, ..._options}
 
@@ -40,7 +40,7 @@ export default class ModelController {
             if(options.page) options.page = parseInt(options.page)
 
             const collection = await this.Service!.find(options)
-            return this.reponse(res, collection);
+            return this.response(res, collection);
         } else {
             this.throw(res, 'Invalid request.')
         }
@@ -59,7 +59,7 @@ export default class ModelController {
             const options = {...req.body, ..._options}
             options.id = req.params.id
             const model = await this.Service!.update(options)
-            return this.reponse(res, model);
+            return this.response(res, model);
         } else {
             this.throw(res, 'Invalid request. No ID speicified.')
         }
@@ -77,7 +77,7 @@ export default class ModelController {
         if(req.body || _options) {
             const options = {...req.body, ..._options}
             const model = await this.Service!.create(options)
-            return this.reponse(res, model);
+            return this.response(res, model);
         } else {
             this.throw(res, 'Invalid request. No ID specified.')
         }
@@ -94,7 +94,7 @@ export default class ModelController {
     public async remove(req: express.Request, res: express.Response): Promise<void> {
         if(req.body.id) {
             const deleted = await this.Service!.remove(req.body.id)
-            return this.reponse(res, deleted);
+            return this.response(res, deleted);
         } else {
             this.throw(res, 'Invalid request. No ID specified.')
         }
@@ -108,7 +108,7 @@ export default class ModelController {
      * @param {*} result
      * @memberof ModelController
      */
-    protected reponse(res: express.Response, result:any) : void {
+    protected response(res: express.Response, result:any) : void {
         if('error' in result) {
             jsonHttpError(res, result)
         } else {

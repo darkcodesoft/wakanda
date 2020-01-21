@@ -29,7 +29,7 @@ const VenueSchema = new Schema({
     location: { type: LocationSchema, required: true}
 }, { _id : false })
 
-VenueSchema.index({ name: 'text', city: 'text', region: 'text', country: 'text', address: 'text', zipcode: 'text'  })
+VenueSchema.index({ name: 'text', city: 'text', region: 'text', country: 'text', address: 'text', zipcode: 'text' })
 
 // Configure Image sub-schema
 const ImageSchema = new Schema({
@@ -65,7 +65,7 @@ const EventSchema = new Schema({
     price: PriceSchema
 })
 
-EventSchema.index({ name: 'text', info: 'text', tags: 'text' })
+EventSchema.index({ name: 'text', info: 'text', tags: 'text', location: '2dsphere' })
 
 // Export Event model
 export const Event: Model<EventModel> = connection.model<EventModel>("Event", EventSchema)

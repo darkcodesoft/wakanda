@@ -1,6 +1,4 @@
 import express from 'express'
-import spdy from 'spdy'
-import fs from 'fs'
 import cors from 'cors'
 import { domains } from './cors.json'
 import path from 'path'
@@ -137,12 +135,15 @@ export default class Server {
      */
     private corsSetup() {
         return cors((req, callback) => {
-            let config
+
+            let config: any
+
             if(domains.indexOf(req.header('Origin')!) !== -1) {
                 config = { origin: true }
             } else {
                 config = { origin: false }
             }
+
             callback( null, config )
         })
     }
@@ -157,17 +158,5 @@ export default class Server {
         this.process.listen(port, () => {
             console.log(`[i] Server started at port: ${port}`)
         })
-        /*
-         const port: number = this.getPort()
-         const options: spdy.ServerOptions = {
-             key: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.key'), 'utf8'),
-             cert: fs.readFileSync(path.join(process.cwd(), 'public/certificate/server.crt'), 'utf8')
-         }
-
-         spdy.createServer(options, this.process).listen(port, (err: any) => {
-             if (err) throw new Error(err)
-             console.log(`[i] Server started @ port: ${port}`)
-         });
-         */
     }
 }

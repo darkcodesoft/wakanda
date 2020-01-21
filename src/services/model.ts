@@ -56,6 +56,15 @@ export default class ModelService implements ModelServiceInterface {
      *
      *
      * @protected
+     * @type {number}
+     * @memberof BaseService
+     */
+    protected base_distance: number = 2 // in mile
+
+    /**
+     *
+     *
+     * @protected
      * @type {string}
      * @memberof BaseService
      */
@@ -78,6 +87,22 @@ export default class ModelService implements ModelServiceInterface {
 
             if(!!search) {
                 match.$text = { $search: search }
+            }
+
+            if(!!options.lat && !!options.long) {
+                const distance  = parseFloat(options.distance ? options.distance : this.base_distance) * 1609.34 // convert to meters
+                const lat = parseFloat(options.lat)
+                const long = parseFloat(options.long)
+
+                match.location = {
+                    $nearSphere: {
+                        $maxDistance: distance,
+                        $geometry: {
+                            type: 'Point',
+                            coordinates: [long, lat]
+                        }
+                    }
+                }
             }
 
             return this.Model!.find({}).
