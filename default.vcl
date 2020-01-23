@@ -10,7 +10,7 @@ sub vcl_recv {
 }
 sub vcl_backend_response {
   if (bereq.method && bereq.url ~ "^/api$") {
-    set beresp.ttl = 30s;
+    set beresp.ttl = 43200s;
     set beresp.uncacheable = false;
   }
   return (deliver);
