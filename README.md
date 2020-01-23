@@ -15,58 +15,59 @@ All endpoints are signed with the logged in user id and temp auth token received
 ### Events API call endpoints
 
 Get all events
-> [GET]http://localhost:3001/api/v1/event/
-
+> [GET]https://wapi.darkcode.software/api/v1/event/
+> example: curl -G https://wapi.darkcode.software/api/v1/event/ -d lat=40.742054 -d long=-73.769417 -d fields=name,venue -d distance=10 -d limit=2 -d sort=location
+>
 Get single event
-> [GET]http://localhost:3001/api/v1/event/:id
+> [GET]https://wapi.darkcode.software/api/v1/event/:id
 
 Create event
-> [POST]http://localhost:3001/api/v1/event/
+> [POST]https://wapi.darkcode.software/api/v1/event/
 
 Update event
-> [PUT]http://localhost:3001/api/v1/event/:id
+> [PUT]https://wapi.darkcode.software/api/v1/event/:id
 
 Delete event
-> [DELETE]http://localhost:3001/api/v1/event/:id
+> [DELETE]https://wapi.darkcode.software/api/v1/event/:id
 
 ### User API call endpoints
 
 Get all users
-> [GET]http://localhost:3001/api/v1/user/
+> [GET]https://wapi.darkcode.software/api/v1/user/
 
 Get single user
-> [GET]http://localhost:3001/api/v1/user/:id
+> [GET]https://wapi.darkcode.software/api/v1/user/:id
 
 Create user
-> [POST]http://localhost:3001/api/v1/user/
+> [POST]https://wapi.darkcode.software/api/v1/user/
 
 Update user
-> [PUT]http://localhost:3001/api/v1/user/:id
+> [PUT]https://wapi.darkcode.software/api/v1/user/:id
 
 Delete user
-> [DELETE]http://localhost:3001/api/v1/user/:id
+> [DELETE]https://wapi.darkcode.software/api/v1/user/:id
 
 ### Admin endpoints
 
 Get Dashboard data
-> [GET]http://localhost:3001/api/v1/admin/
+> [GET]https://wapi.darkcode.software/api/v1/admin/
 
 Get all users
-> [GET]http://localhost:3001/api/v1/admin/user/
+> [GET]https://wapi.darkcode.software/api/v1/admin/user/
 
 Get single user
-> [GET]http://localhost:3001/api/v1/admin/user/:id
+> [GET]https://wapi.darkcode.software/api/v1/admin/user/:id
 
 Register
-> [POST]http://localhost:3001/api/v1/admin/register
+> [POST]https://wapi.darkcode.software/api/v1/admin/register
 
 Get all events
-> [GET]http://localhost:3001/api/v1/admin/event/
+> [GET]https://wapi.darkcode.software/api/v1/admin/event/
 
 Get single event
-> [GET]http://localhost:3001/api/v1/admin/event/:id
+> [GET]https://wapi.darkcode.software/api/v1/admin/event/:id
 
 #### Data mining endpoints
-> [HTTP GET]http://localhost:3001/api/v1/admin/mine/
-> [SOCKET GET]http://localhost:3001/api/v1/admin/socket/:message
+> [HTTP GET]https://wapi.darkcode.software/api/v1/admin/mine/
+> [SOCKET GET]https://wapi.darkcode.software/api/v1/admin/socket/:message
 
