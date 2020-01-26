@@ -15,7 +15,7 @@ const job = new CronJob('0 8 * * *', () => {
     spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')])
     const now = new Date().toISOString()
     console.log('[+] Cron job started' + now);
-}, null, true, 'America/New_York')
+}, undefined, true, 'America/New_York')
 
 job.start()
 
