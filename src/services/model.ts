@@ -131,8 +131,8 @@ export default class ModelService implements ModelServiceInterface {
             const count = await this.count()
             const total = (typeof count === 'number' ? count : 0)
             const last_page = Math.ceil(total/limit)
-            const next_page = page + 1
-            const previous_page = page -1
+            const next_page = (last_page > page ? page + 1 : undefined)
+            const previous_page = (page === 1 ? undefined : page - 1)
             const pagination: ApiResponsePagination = {
                 count: (items instanceof Array ? items.length : 0),
                 limit,
