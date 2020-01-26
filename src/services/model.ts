@@ -1,5 +1,12 @@
 import { Model } from "mongoose"
 import { HttpResponseError } from '../lib/http'
+import { EventModel } from '../models/Event'
+import { UserModel } from "../models/User";
+import {
+    ApiResponseList,
+    ApiResponseListData,
+    ApiResponsePagination
+} from '../interfaces/ApiResponse'
 
 /**
  *
@@ -8,10 +15,10 @@ import { HttpResponseError } from '../lib/http'
  * @interface ModelServiceInterface
  */
 export interface ModelServiceInterface {
-    find(options: any): Promise<Model<any>[] | HttpResponseError>
-    findById(id: string): Promise<Model<any>|HttpResponseError>
-    create(options: any): Promise<Model<any>|HttpResponseError>
-    update(options: any): Promise<Model<any>|HttpResponseError>
+    find(options: any): Promise<ApiResponseList|HttpResponseError>
+    findById(id: string): Promise<Model<EventModel|UserModel>|HttpResponseError>
+    create(options: any): Promise<Model<EventModel|UserModel>|HttpResponseError>
+    update(options: any): Promise<Model<EventModel|UserModel>|HttpResponseError>
     remove(id: string): Promise<boolean|HttpResponseError>
     count(): Promise<number|HttpResponseError>
 }
@@ -73,16 +80,18 @@ export default class ModelService implements ModelServiceInterface {
     /**
      *
      * @param options
-     * @returns Promise<Model<any>[] | HttpResponseError>
+     * @returns Promise<ApiResponseList | HttpResponseError>
      */
-    public async find(options: any): Promise<Model<any>[] | HttpResponseError> {
+    public async find(options: any): Promise<ApiResponseList|HttpResponseError> {
+
         try {
+
             const fields = options.fields || {}
-            const match = options.match || {}
-            const limit = options.limit || this.base_limit
-            const page = options.page || this.base_page
-            const sort = options.sort || this.base_sort
-            const skip = limit * (page - 1)
+            const match  = options.match || {}
+            const limit  = options.limit || this.base_limit
+            const page   = options.page || this.base_page
+            const sort   = options.sort || this.base_sort
+            const skip   = limit * (page - 1)
             const search = options.search ? options.search.toString() : undefined
 
             if(!!search) {
@@ -91,7 +100,7 @@ export default class ModelService implements ModelServiceInterface {
 
             if(!!options.lat && !!options.long) {
                 const distance  = parseFloat(options.distance ? options.distance : this.base_distance) * 1609.34 // convert to meters
-                const lat = parseFloat(options.lat)
+                const lat  = parseFloat(options.lat)
                 const long = parseFloat(options.long)
 
                 match.location = {
@@ -105,7 +114,7 @@ export default class ModelService implements ModelServiceInterface {
                 }
             }
 
-            return this.Model!.find({}).
+            const items: Model<EventModel|UserModel>[]|HttpResponseError = await this.Model!.find({}).
                 skip(skip).
                 limit(limit).
                 sort(sort).
@@ -118,8 +127,40 @@ export default class ModelService implements ModelServiceInterface {
                 catch((error) => {
                     return { code: 404, data: error } as HttpResponseError
                 })
+
+            const count = await this.count()
+            const total = (typeof count === 'number' ? count : 0)
+            const last_page = Math.ceil(total/limit)
+            const next_page = page + 1
+            const previous_page = page -1
+            const pagination: ApiResponsePagination = {
+                count: (items instanceof Array ? items.length : 0),
+                limit,
+                skip,
+                total,
+                current_page: page,
+                next_page,
+                previous_page,
+                last_page
+            }
+
+            const data: ApiResponseListData  = {
+                items,
+                pagination
+            }
+
+            const response: ApiResponseList = {
+                status: ( items instanceof Array ? 'success' : 'fail' ),
+                message: "",
+                data
+            }
+
+            return response
+
         } catch(error) {
+
             return { code: 500, data: error } as HttpResponseError
+
         }
     }
 
@@ -129,7 +170,7 @@ export default class ModelService implements ModelServiceInterface {
      * @param {string} id
      * @returns {Model<any>}
      */
-    public async findById(id: string): Promise<Model<any>|HttpResponseError> {
+    public async findById(id: string): Promise<Model<EventModel|UserModel>|HttpResponseError> {
         try {
             return await this.Model!.findOne({ _id: id })
         } catch(error) {
@@ -144,7 +185,7 @@ export default class ModelService implements ModelServiceInterface {
      * @returns {(Model<any|HttpResponseError>)}
      * @memberof ModelService
      */
-    public async create(options: any): Promise<Model<any>|HttpResponseError> {
+    public async create(options: any): Promise<Model<EventModel|UserModel>|HttpResponseError> {
         try {
             const model = new this.Model!(options)
             await model.save()
@@ -161,7 +202,7 @@ export default class ModelService implements ModelServiceInterface {
      * @returns {(Model<any|HttpResponseError>)}
      * @memberof ModelService
      */
-    public async update(options: any): Promise<Model<any>|HttpResponseError> {
+    public async update(options: any): Promise<Model<EventModel|UserModel>|HttpResponseError> {
         try {
             const id = options.id
             const model = await this.Model!.findByIdAndUpdate(id, options)

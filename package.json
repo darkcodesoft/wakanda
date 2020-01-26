@@ -10,24 +10,7 @@
   "scripts": {
     "start": "npm run test && npm run build && pm2-runtime start ./build/Release/wakanda.js -i 0 -- --port 3001",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
-    "build": "webpack",
-    "test": "nyc mocha --exit --require ts-node/register --watch-extensions ts 'src/**/*.test.ts' 'public/**/*.test.ts'"
-  },
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "html",
-      "json"
-    ],
-    "all": true,
-    "temp-dir": "./.coverage/tmp",
-    "report-dir": "./.coverage"
+    "build": "webpack"
   },
   "author": "storm2910@icloud.com",
   "license": "ISC",
@@ -54,7 +37,6 @@
     "mocha": "5.2.0",
     "node-loader": "0.6.0",
     "nodemon": "1.18.10",
-    "nyc": "13.3.0",
     "ts-loader": "5.3.3",
     "ts-node": "8.0.2",
     "typescript": "3.3.3333",
