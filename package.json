@@ -29,6 +29,7 @@
     "@types/mongoose": "5.3.21",
     "@types/morgan": "1.7.35",
     "@types/node": "11.9.5",
+    "@types/nodemailer": "6.4.0",
     "@types/spdy": "3.4.4",
     "@types/webpack": "4.4.25",
     "@types/webpack-dev-server": "3.1.2",
@@ -59,6 +60,7 @@
     "mongoose": "5.4.18",
     "morgan": "1.9.1",
     "node-addon-api": "1.6.2",
+    "nodemailer": "2.7.2",
     "pug": "2.0.3",
     "spdy": "4.0.0",
     "ws": "7.0.0"

@@ -67,7 +67,7 @@ export default class App {
      * @returns boolean
      * @memberof App
      */
-    public main(): boolean {
+    public start(): boolean {
         try {
             this.server.start()
             return true

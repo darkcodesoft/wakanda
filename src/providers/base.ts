@@ -2,6 +2,7 @@ import { Item } from '../interfaces/Event'
 import { connection } from '../storage/connection'
 import { Event } from '../models/Event'
 import { MineJob } from '../models/Job'
+import { send } from '../services/notification'
 import Socket from '../../public/socket';
 import axios from 'axios'
 
@@ -190,6 +191,8 @@ export default class BaseProvider {
      * @memberof TicketMaster
      */
     public async fetch(): Promise<void> {
+        send(this.id! + ' mining started.')
+
         let n = this.page
         this.configureUrl()
         this.setPage(n)
@@ -224,15 +227,19 @@ export default class BaseProvider {
      * @memberof BaseProvider
      */
     protected async store(): Promise<boolean|any> {
+        const now = new Date().toISOString()
         try {
             await Event.deleteMany({ source: this.id })
             const result = await Event.insertMany(this.succeeded, { ordered: false })
             await MineJob.deleteMany({ mineId: this.id })
-            await new MineJob({ mineId: this.id, count: result.length, timestamp: new Date().toISOString() }).save()
-            console.log(`[+] ${this.id} fetch success: ${result.length}`)
+            await new MineJob({ mineId: this.id, count: result.length, timestamp: now }).save()
+            const totalEntries = await Event.estimatedDocumentCount()
+            console.log(`[+] ${this.id} fetch success: ${totalEntries}`)
             Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
             connection.close()
+            send(this.id! + ' mining success total entries: ' + totalEntries)
         } catch(e) {
+            send(this.id! + ' mining error at : ' + now)
             console.log(e)
             Socket.static().json({ message: 'PROVIDER_ERROR', data: e })
         }
