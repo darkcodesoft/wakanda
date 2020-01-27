@@ -18,9 +18,9 @@ if(!!args.port) {
 
 /**
  *
- * Configure cron job to mine for events everyday at 3:00 am.
+ * Configure cron job to mine for events at minute 0 past every 12th hour.
  */
-const job = new CronJob('0 3 * * *', () => {
+const job = new CronJob('0 */12 * * *', () => {
     spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')])
     const now = new Date().toISOString()
     console.log('[+] automatic mining job started at ' + now);
