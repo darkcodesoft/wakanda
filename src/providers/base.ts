@@ -237,9 +237,9 @@ export default class BaseProvider {
             console.log(`[+] ${this.id} fetch success: ${totalEntries}`)
             Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }))
             connection.close()
-            send(this.id! + ' mining success total entries: ' + totalEntries)
+            send(this.id + ' mining success total entries: ' + totalEntries)
         } catch(e) {
-            send(this.id! + ' mining error at : ' + now)
+            send(this.id + ' mining error at : ' + now)
             console.log(e)
             Socket.static().json({ message: 'PROVIDER_ERROR', data: e })
         }
