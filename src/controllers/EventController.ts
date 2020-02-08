@@ -27,10 +27,33 @@ class EventController extends ModelController {
      * @memberof EventController
      */
     public async find (req: express.Request, res: express.Response): Promise<void> {
-        const now = new Date().toISOString()
-        const options = {
-            match: { active: true, start: { $gte: now } }
+        const options: any = {}
+        let match: any|undefined = undefined
+
+        if(req.query.active) {
+            match = match || {}
+            match.active = req.query.active == '1'
         }
+
+        if(req.query.lte || req.query.gte) {
+            match = match || {}
+            const start: any = {}
+
+            if(req.query.gte) {
+                start.$gte = new Date(req.query.gte).toISOString()
+            }
+
+            if(req.query.lte) {
+                start.$lte = new Date(req.query.lte).toISOString()
+            }
+
+            match.start = start
+        }
+
+        if(match) {
+            options.match = match
+        }
+
         return super.find(req, res, options)
     }
 }
