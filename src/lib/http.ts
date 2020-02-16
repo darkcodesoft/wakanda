@@ -7,10 +7,10 @@ import express from 'express';
  * @interface HttpResponseError
  */
 export interface HttpResponseError {
-    error?: boolean
-    code: number
-    message?: string
-    data?: any
+  error?: boolean
+  code: number
+  message?: string
+  data?: any
 }
 
 /**

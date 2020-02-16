@@ -1,14 +1,14 @@
 {
-    "admin": {
-        "name" : "admin",
-        "permissions": ["r", "w", "x"]
-    },
-    "user": {
-        "name": "user",
-        "permissions": ["r", "w"]
-    },
-    "guest": {
-        "name": "guest",
-        "permissions": ["r"]
-    }
+  "admin": {
+    "name" : "admin",
+    "permissions": ["r", "w", "x"]
+  },
+  "user": {
+    "name": "user",
+    "permissions": ["r", "w"]
+  },
+  "guest": {
+    "name": "guest",
+    "permissions": ["r"]
+  }
 }

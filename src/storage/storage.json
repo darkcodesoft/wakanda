@@ -1,7 +1,7 @@
 {
-    "host": "mongo",
-    "port": "27017",
-    "db": "wakanda",
-    "username": "fluffy",
-    "password": "sal"
+  "host": "mongo",
+  "port": "27017",
+  "db": "wakanda",
+  "username": "fluffy",
+  "password": "sal"
 }
