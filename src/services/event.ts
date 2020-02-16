@@ -1,8 +1,7 @@
-import ModelService from "./model"
-import { Event } from '../models/Event'
+import ModelService from './model';
+import { Event } from '../models/Event';
 
 class EventService extends ModelService {
-
     /**
      *
      *
@@ -12,4 +11,4 @@ class EventService extends ModelService {
     protected Model = Event
 }
 
-export default new EventService()
+export default new EventService();

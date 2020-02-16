@@ -1,11 +1,11 @@
-import express from 'express'
-import cors from 'cors'
-import { domains } from './cors.json'
-import path from 'path'
-import cookieParser from 'cookie-parser'
-import logger from 'morgan'
-import crypto from 'crypto'
-import { name } from '../package.json'
+import express from 'express';
+import cors from 'cors';
+import { domains } from './cors.json';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import crypto from 'crypto';
+import { name } from '../package.json';
 
 /**
  *
@@ -13,7 +13,6 @@ import { name } from '../package.json'
  * @class Server
  */
 export default class Server {
-
     private static instance?:Server|null = null
     private port: number = 3001
     private ports: number[] = []
@@ -29,11 +28,11 @@ export default class Server {
      * @returns
      * @memberof Server
      */
-    public static static(): Server {
-        if(Server.instance === null) {
-            Server.instance = new Server
-        }
-        return Server.instance!;
+    public static static (): Server {
+      if (Server.instance === null) {
+        Server.instance = new Server();
+      }
+      return Server.instance!;
     }
 
     /**
@@ -43,41 +42,41 @@ export default class Server {
      * @param String name
      * @return Server instance
      */
-    constructor() {
-        this.process = express()
-        this.cookieSecret = crypto.createHash('md5').update(name).digest("hex")
-        this.setupMiddleWares()
-        this.router = express.Router()
-        this.process.use(this.router)
+    constructor () {
+      this.process = express();
+      this.cookieSecret = crypto.createHash('md5').update(name).digest('hex');
+      this.setupMiddleWares();
+      this.router = express.Router();
+      this.process.use(this.router);
 
-        if(!!process.env.PORT) {
-            const port = parseInt(process.env.PORT)
-            this.setPort(port)
-        }
+      if (process.env.PORT) {
+        const port = parseInt(process.env.PORT);
+        this.setPort(port);
+      }
     }
 
     /**
      * Set up default middlewares
      * @returns void
      */
-    private setupMiddleWares(): void {
-        this.process.use(this.corsSetup())
-        // add http logger
-        this.process.use(logger('dev'))
-        // add json
-        this.process.use(express.json())
-        // add urlencoder
-        this.process.use(express.urlencoded({ extended: false }))
-        // add coockie parser
-        this.process.use(cookieParser(this.cookieSecret))
-        // setup public directory
-        this.process.use(express.static(path.join(process.cwd(), 'public')))
-        // hide x-powered-by
-        this.process.disable('x-powered-by')
-        // setup views directory
-        this.process.set('views', path.join(process.cwd(), 'views'))
-        // setup view engine
-        this.process.set('view engine', 'pug')
+    private setupMiddleWares (): void {
+      this.process.use(this.corsSetup());
+      // add http logger
+      this.process.use(logger('dev'));
+      // add json
+      this.process.use(express.json());
+      // add urlencoder
+      this.process.use(express.urlencoded({ extended: false }));
+      // add coockie parser
+      this.process.use(cookieParser(this.cookieSecret));
+      // setup public directory
+      this.process.use(express.static(path.join(process.cwd(), 'public')));
+      // hide x-powered-by
+      this.process.disable('x-powered-by');
+      // setup views directory
+      this.process.set('views', path.join(process.cwd(), 'views'));
+      // setup view engine
+      this.process.set('view engine', 'pug');
     }
 
     /**
@@ -86,13 +85,13 @@ export default class Server {
      * @param number port
      * @return void
      */
-    public setPort(port:number): void {
-        if(this.portIsValid(port)) {
-            this.port = port
-            this.ports.push(port)
-        } else {
-            throw TypeError(`${port} is not a valid port.`)
-        }
+    public setPort (port:number): void {
+      if (this.portIsValid(port)) {
+        this.port = port;
+        this.ports.push(port);
+      } else {
+        throw TypeError(`${port} is not a valid port.`);
+      }
     }
 
     /**
@@ -100,8 +99,8 @@ export default class Server {
      *
      * @return number port
      */
-    public getPort(): number {
-        return this.port
+    public getPort (): number {
+      return this.port;
     }
 
     /**
@@ -110,8 +109,8 @@ export default class Server {
      * @returns {number[]}
      * @memberof Server
      */
-    public getPorts(): number[] {
-        return this.ports
+    public getPorts (): number[] {
+      return this.ports;
     }
 
     /**
@@ -122,30 +121,29 @@ export default class Server {
      * @returns {boolean}
      * @memberof Server
      */
-    private portIsValid( port:number ): boolean {
-        const min = 1
-        const max = 65535
-        var num = +port;
-        return num >= min && num <= max && port === num;
+    private portIsValid (port:number): boolean {
+      const min = 1;
+      const max = 65535;
+      var num = +port;
+      return num >= min && num <= max && port === num;
     }
 
     /**
      * CORS setup
      * @returns Function
      */
-    private corsSetup() {
-        return cors((req, callback) => {
+    private corsSetup () {
+      return cors((req, callback) => {
+        let config: any;
 
-            let config: any
+        if (domains.indexOf(req.header('Origin')!) !== -1) {
+          config = { origin: true };
+        } else {
+          config = { origin: false };
+        }
 
-            if(domains.indexOf(req.header('Origin')!) !== -1) {
-                config = { origin: true }
-            } else {
-                config = { origin: false }
-            }
-
-            callback( null, config )
-        })
+        callback(null, config);
+      });
     }
 
     /**
@@ -153,10 +151,10 @@ export default class Server {
      *
      * @memberof Server
      */
-    public start(): void {
-        const port:number =this.getPort()
-        this.process.listen(port, () => {
-            console.log(`[i] Server started at port: ${port}`)
-        })
+    public start (): void {
+      const port:number = this.getPort();
+      this.process.listen(port, () => {
+        console.log(`[i] Server started at port: ${port}`);
+      });
     }
 }

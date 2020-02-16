@@ -1,7 +1,7 @@
-import { Model } from "mongoose"
-import { HttpResponseError } from '../lib/http'
-import { EventModel } from '../models/Event'
-import { UserModel } from '../models/User'
+import { Model } from 'mongoose';
+import { HttpResponseError } from '../lib/http';
+import { EventModel } from '../models/Event';
+import { UserModel } from '../models/User';
 
 /*
  *
@@ -55,8 +55,8 @@ export declare interface ApiResponsePagination {
     limit: number
     skip: number
     total: number
-    current_page: number
-    next_page?: number
-    previous_page?: number
-    last_page?: number
+    currentPage: number
+    nextPage?: number
+    previousPage?: number
+    lastPage?: number
 }

@@ -121,7 +121,6 @@ export declare interface Image {
     height: number
 }
 
-
 /**
  *
  *
@@ -243,8 +242,6 @@ export declare interface TicketMasterPage {
 export declare interface TicketMasterLink {
     href: string
 }
-
-
 
 /**
  *

@@ -13,9 +13,10 @@ export interface JSONMessage {
  * @class SocketClass
  */
 export default class WebSocketServer {
-
-
-	private static instance?:WebSocketServer|null = null
+    /**
+     * static instance
+     */
+    private static instance?:WebSocketServer|null = null
 
     /**
      *
@@ -25,27 +26,27 @@ export default class WebSocketServer {
      */
     public server: WebSocket.Server
 
-	/**
+    /**
      * Get WebSocketServer  static instance
      *
      * @static
      * @returns
      * @memberof WebSocketServer
      */
-    public static static(): WebSocketServer {
-		if(WebSocketServer.instance === null){
-			const port = server.static().getPort() + 1
-			WebSocketServer.instance = new WebSocketServer(port)
-		}
-		return WebSocketServer.instance!
-	}
+    public static static (): WebSocketServer {
+      if (WebSocketServer.instance === null) {
+        const port = server.static().getPort() + 1;
+        WebSocketServer.instance = new WebSocketServer(port);
+      }
+      return WebSocketServer.instance!;
+    }
 
     /**
      *Creates an instance of SocketClass.
      * @memberof SocketClass
      */
-    constructor(port: number = 3001) {
-        this.server = new WebSocket.Server({ port: port });
+    constructor (port: number = 3001) {
+      this.server = new WebSocket.Server({ port: port });
     }
 
     /**
@@ -54,12 +55,12 @@ export default class WebSocketServer {
      * @param {string} message
      * @memberof SocketClass
      */
-    public send(message: string) {
-        this.server.clients.forEach( client => {
-            if(client.readyState === WebSocket.OPEN) {
-                client.send(message)
-            }
-        })
+    public send (message: string) {
+      this.server.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
     }
 
     /**
@@ -68,8 +69,8 @@ export default class WebSocketServer {
      * @param {JSONMessage} data
      * @memberof WebSocketServer
      */
-    public json(data: JSONMessage) {
-        const encoded = JSON.stringify(data)
-        this.send(encoded)
+    public json (data: JSONMessage) {
+      const encoded = JSON.stringify(data);
+      this.send(encoded);
     }
 }

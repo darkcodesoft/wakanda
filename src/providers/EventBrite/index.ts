@@ -1,6 +1,6 @@
-import BaseProvider from '../base'
-import { Factory } from './factory'
-import { Item, EventBriteEvent } from '../../interfaces/Event'
+import BaseProvider from '../base';
+import { Factory } from './factory';
+import { Item, EventBriteEvent } from '../../interfaces/Event';
 
 /**
  *
@@ -9,7 +9,6 @@ import { Item, EventBriteEvent } from '../../interfaces/Event'
  * @extends {BaseProvider}
  */
 class EventBrite extends BaseProvider {
-
     /**
      *
      *
@@ -49,11 +48,11 @@ class EventBrite extends BaseProvider {
      * @memberof TicketMaster
      */
     private expand = [
-        'venue',
-        'organizer',
-        'category',
-        'subcategory',
-        'ticket_classes',
+      'venue',
+      'organizer',
+      'category',
+      'subcategory',
+      'ticket_classes'
     ]
 
     /**
@@ -86,13 +85,13 @@ class EventBrite extends BaseProvider {
      * @protected
      * @memberof TicketMaster
      */
-    protected configureUrl(): void {
-        super.configureUrl()
-        this.url!.searchParams.set('token', this.token)
-        this.url!.searchParams.set('expand', this.expand.join(','))
-        this.url!.searchParams.set('location.address', this.location)
-        this.url!.searchParams.set('location.within', this.distance)
-        this.url!.searchParams.set('sort_by', 'date')
+    protected configureUrl (): void {
+      super.configureUrl();
+        this.url!.searchParams.set('token', this.token);
+        this.url!.searchParams.set('expand', this.expand.join(','));
+        this.url!.searchParams.set('location.address', this.location);
+        this.url!.searchParams.set('location.within', this.distance);
+        this.url!.searchParams.set('sort_by', 'date');
     }
 
     /**
@@ -103,12 +102,12 @@ class EventBrite extends BaseProvider {
      * @param {*} response
      * @memberof EventBrite
      */
-    protected successHandler(url: URL, response: any): void {
-        const events: EventBriteEvent[] = response.events
-        const collection: Item[] = this.Factory!.collect(events)
-        this.succeeded.push(...collection)
-        super.successHandler(url, response);
+    protected successHandler (url: URL, response: any): void {
+      const events: EventBriteEvent[] = response.events;
+      const collection: Item[] = this.Factory!.collect(events);
+      this.succeeded.push(...collection);
+      super.successHandler(url, response);
     }
 }
 
-export default new EventBrite
+export default new EventBrite();

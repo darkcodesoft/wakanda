@@ -20,32 +20,32 @@ export interface JWTPayload {
  * @type jwt.SignOptions
  */
 const signatureOptions: jwt.SignOptions = {
-    issuer: 'DarkCode Software Inc.',
-    subject: '',
-    audience: 'wkd-admin',
-    expiresIn: 60 * 60, // 60 * 60 * 12 --> 12hr
-    algorithm: "RS256"
-}
+  issuer: 'DarkCode Software Inc.',
+  subject: '',
+  audience: 'wkd-admin',
+  expiresIn: 60 * 60, // 60 * 60 * 12 --> 12hr
+  algorithm: 'RS256'
+};
 
 /**
  * verifyOptions config
  * @type jwt.VerifyOptions
  */
 const verifyOptions: jwt.VerifyOptions = {
-    issuer: 'DarkCode Software Inc.',
-    subject: '',
-    audience: 'wkd-admin'
-}
+  issuer: 'DarkCode Software Inc.',
+  subject: '',
+  audience: 'wkd-admin'
+};
 
 /**
  *
  * @param payload
  * @return jwt.sign method
  */
-export function JWTSign(payload: JWTPayload) {
-    signatureOptions.subject = payload._id;
-    signatureOptions.audience = payload.host;
-    return jwt.sign(payload, PRIVATE_KEY, signatureOptions)
+export function JWTSign (payload: JWTPayload) {
+  signatureOptions.subject = payload._id;
+  signatureOptions.audience = payload.host;
+  return jwt.sign(payload, PRIVATE_KEY, signatureOptions);
 }
 
 /**
@@ -54,21 +54,21 @@ export function JWTSign(payload: JWTPayload) {
  * @param email
  * @return bool
  */
-export function JWTVerify(token: string, id: string, host: string) {
-    verifyOptions.subject = id;
-    verifyOptions.audience = host;
+export function JWTVerify (token: string, id: string, host: string) {
+  verifyOptions.subject = id;
+  verifyOptions.audience = host;
 
-    try {
-        return jwt.verify(token, PUBLIC_KEY, verifyOptions);
-    } catch (err){
-        return false;
-    }
+  try {
+    return jwt.verify(token, PUBLIC_KEY, verifyOptions);
+  } catch (err) {
+    return false;
+  }
 }
 
 /**
  *
  * @param token
  */
-export function JWTDecode(token: string) {
-    return jwt.decode(token, { complete: true });
+export function JWTDecode (token: string) {
+  return jwt.decode(token, { complete: true });
 }

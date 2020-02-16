@@ -10,11 +10,21 @@
   "scripts": {
     "start": "npm run test && npm run build && pm2-runtime start ./build/Release/wakanda.js -i 0 -- --port 3001",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
-    "build": "webpack"
+    "build": "webpack",
+    "lint": "eslint --ext .ts,.js --ignore-path .gitignore .",
+    "lint-fix": "eslint --ext .ts,.js --ignore-path .gitignore . --fix"
   },
   "author": "storm2910@icloud.com",
   "license": "ISC",
-  "devDependencies": {
+    "lint-staged": {
+    "*.{ts,js,json}": "eslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },  
+"devDependencies": {
     "@types/bcrypt": "3.0.0",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.1.7",
@@ -35,7 +45,17 @@
     "@types/webpack-dev-server": "3.1.2",
     "@types/webpack-node-externals": "1.6.3",
     "@types/ws": "6.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
     "chai": "4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "4.2.3",
+    "lint-staged": "10.0.7",
     "mocha": "5.2.0",
     "node-loader": "0.6.0",
     "nodemon": "1.18.10",

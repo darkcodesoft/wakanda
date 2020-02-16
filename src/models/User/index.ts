@@ -1,9 +1,9 @@
-import { Document, Schema, Model, HookNextFunction } from "mongoose"
-import { connection } from '../../storage/connection'
-import roles from './roles.json'
-import bcrypt from 'bcrypt'
+import { Document, Schema, Model, HookNextFunction } from 'mongoose';
+import { connection } from '../../storage/connection';
+import roles from './roles.json';
+import bcrypt from 'bcrypt';
 
-const SALT_WORK_FACTOR = 10
+const SALT_WORK_FACTOR = 10;
 
 // Define User interface
 export interface User {
@@ -14,66 +14,66 @@ export interface User {
 
 // Configure and export UserModel type
 export interface UserModel extends User, Document {
-    comparePassword(password: string ): Promise<boolean>
+    comparePassword(password: string): Promise<boolean>
 }
 
 // Configure Role sub-Schema
 const RoleSchema = new Schema({
-    name: { type: String, index: true },
-    permissions: [String]
-}, { _id: false})
+  name: { type: String, index: true },
+  permissions: [String]
+}, { _id: false });
 
 // Configure User Schema
 const UserSchema = new Schema({
-    name: { type: String, index: true, required: true, unique: true },
-    email: { type: String, index: true, required: true, unique: true },
-    role: { type: RoleSchema, default: roles.user },
-    password: { type: String, required: true },
-    created: { type: Date, default: new Date() },
-    lastLogin: { type: Date, default: new Date() },
-    location: String,
-    active: { type: Boolean, default: true },
-    avatar: { type: String }
-})
+  name: { type: String, index: true, required: true, unique: true },
+  email: { type: String, index: true, required: true, unique: true },
+  role: { type: RoleSchema, default: roles.user },
+  password: { type: String, required: true },
+  created: { type: Date, default: new Date() },
+  lastLogin: { type: Date, default: new Date() },
+  location: String,
+  active: { type: Boolean, default: true },
+  avatar: { type: String }
+});
 
 // bcrypt password on save
-UserSchema.pre('save', function(next: HookNextFunction) {
-    const user = this as UserModel
-    // only hash the password if it has been modified (or is new)
-    if (!user.isModified('password')) return next();
+UserSchema.pre('save', function (next: HookNextFunction) {
+  const user = this as UserModel;
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified('password')) return next();
 
-    // generate a salt
-    bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
-        if (err) return next(err)
+  // generate a salt
+  bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
+    if (err) return next(err);
 
-        // hash the password using our new salt
-        bcrypt.hash(user.password, salt, (err, hash) => {
-            if (err) return next(err)
+    // hash the password using our new salt
+    bcrypt.hash(user.password, salt, (err, hash) => {
+      if (err) return next(err);
 
-            // override the cleartext password with the hashed one
-            user.password = hash
-            next()
-        })
-    })
-})
+      // override the cleartext password with the hashed one
+      user.password = hash;
+      next();
+    });
+  });
+});
 
 // configure bcrypt passwords compare method
-UserSchema.methods.comparePassword = async function(password: string): Promise<boolean> {
-    const match = await bcrypt.compare(password, this.password)
-    return match
-}
+UserSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
+  const match = await bcrypt.compare(password, this.password);
+  return match;
+};
 
 // validators
 // email
 UserSchema.path('email').validate((email: string) => {
-    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-    return emailRegex.test(email)
-}, 'Email is invalid.')
+  const emailRegex = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailRegex.test(email);
+}, 'Email is invalid.');
 
- // password
+// password
 UserSchema.path('password').validate((password: string) => {
-    return password.length >= 6
-}, 'Password is invalid.')
+  return password.length >= 6;
+}, 'Password is invalid.');
 
 // Export User Model
-export const User: Model<UserModel> = connection.model<UserModel>("User", UserSchema)
+export const User: Model<UserModel> = connection.model<UserModel>('User', UserSchema);

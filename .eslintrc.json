@@ -1,0 +1,33 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "standard"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "legacyDecorators": true,
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": ["node_modules/", ".coverage/"],
+  "rules": {
+    "no-console": 0,
+    "camelcase": "off", 
+    "@typescript-eslint/camelcase": ["error", { "genericType": "never" }],
+    "semi": ["error", "always"],
+    "@typescript-eslint/no-unused-vars": ["error", {
+      "vars": "all",
+      "args": "none"
+    }]
+  }
+}

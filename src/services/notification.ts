@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
 
 /**
  *
@@ -17,12 +17,12 @@ interface EmailInput {
  * Using Gmail for now...
  */
 const transport = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: 'wapi.darkcode.software@gmail.com',
-        pass: 'ma210329*'
-    }
-})
+  service: 'Gmail',
+  auth: {
+    user: 'wapi.darkcode.software@gmail.com',
+    pass: 'ma210329*'
+  }
+});
 
 /**
  *
@@ -30,13 +30,13 @@ const transport = nodemailer.createTransport({
  * @param string message text
  * @return EmailInput
  */
-function parseEmailInputs(text?:string) : EmailInput {
-    return {
-        to: 'darkcode.software@icloud.com',
-        from: 'darkcode.software.@icloud.com',
-        subject: 'Wapi Notification',
-        text
-    } as EmailInput
+function parseEmailInputs (text?:string) : EmailInput {
+  return {
+    to: 'darkcode.software@icloud.com',
+    from: 'darkcode.software.@icloud.com',
+    subject: 'Wapi Notification',
+    text
+  } as EmailInput;
 }
 
 /**
@@ -47,19 +47,19 @@ function parseEmailInputs(text?:string) : EmailInput {
  * @return any
  *
  */
-async function mail(options: EmailInput) : Promise<any> {
-    return await transport.sendMail(options, (err, info) => {
-        const now = new Date().toISOString()
-        if(err) {
-            console.log('[-] email send error at ' + now)
-            console.log(err)
-            return err
-        }
+async function mail (options: EmailInput) : Promise<any> {
+  return transport.sendMail(options, (err, info) => {
+    const now = new Date().toISOString();
+    if (err) {
+      console.log('[-] email send error at ' + now);
+      console.log(err);
+      return err;
+    }
 
-        console.log('[+] email send success at ' + now)
-        console.log(info)
-        return info
-    })
+    console.log('[+] email send success at ' + now);
+    console.log(info);
+    return info;
+  });
 }
 
 /**
@@ -67,7 +67,7 @@ async function mail(options: EmailInput) : Promise<any> {
  * Send text mail
  * @param string email text
  */
-export function send(text: string) {
-    const input = parseEmailInputs(text)
-    return mail(input)
+export function send (text: string) {
+  const input = parseEmailInputs(text);
+  return mail(input);
 }

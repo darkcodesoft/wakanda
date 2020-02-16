@@ -1,6 +1,6 @@
-import webpack from 'webpack'
-import nodeExternals from 'webpack-node-externals'
-import path from 'path'
+import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals';
+import path from 'path';
 
 const config: webpack.Configuration = {
   entry: './public/index.ts',
@@ -21,12 +21,12 @@ const config: webpack.Configuration = {
     ]
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: ['.tsx', '.ts', '.js']
   },
   output: {
     filename: 'wakanda.js',
     path: path.resolve(__dirname, 'build/Release')
   }
-}
+};
 
-export default config
+export default config;

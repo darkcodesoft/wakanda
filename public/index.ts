@@ -1,19 +1,19 @@
-import App from '../src/bootstrap/app'
-import { CronJob } from 'cron'
-import { spawn } from 'child_process'
-import { join } from 'path'
+import App from '../src/bootstrap/app';
+import { CronJob } from 'cron';
+import { spawn } from 'child_process';
+import { join } from 'path';
 
 /**
  *
  * Get app singleton and process passed arguments to retrieve
  * port number if given.
  */
-const app  = App.static()
-const args = require('minimist')(process.argv.slice(2))
+const app = App.static();
+const args = require('minimist')(process.argv.slice(2));
 
-if(!!args.port) {
-    let port = parseInt(args.port)
-    app.server.setPort(port)
+if (args.port) {
+  const port = parseInt(args.port);
+  app.server.setPort(port);
 }
 
 /**
@@ -21,20 +21,19 @@ if(!!args.port) {
  * Configure cron job to mine for events at minute 0 past every 12th hour.
  */
 const job = new CronJob('0 */12 * * *', () => {
-    spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')])
-    const now = new Date().toISOString()
-    console.log('[+] automatic mining job started at ' + now);
-}, undefined, true, 'America/New_York')
+  spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')]);
+  const now = new Date().toISOString();
+  console.log('[+] automatic mining job started at ' + now);
+}, undefined, true, 'America/New_York');
 
 /**
  *
  * Start job
  */
-job.start()
-
+job.start();
 
 /**
  *
  * Start app
  */
-app.start()
+app.start();
