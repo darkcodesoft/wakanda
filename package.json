@@ -17,7 +17,7 @@
   "author": "storm2910@icloud.com",
   "license": "ISC",
     "lint-staged": {
-    "*.{ts,js,json}": "eslint"
+    "*.{ts,js}": "eslint"
   },
   "husky": {
     "hooks": {
