@@ -1,5 +1,5 @@
 import BaseProvider from '../base';
-import { Factory } from './factory';
+import { collect } from './factory';
 import { Item, EventBriteEvent } from '../../interfaces/Event';
 
 /**
@@ -16,14 +16,6 @@ class EventBrite extends BaseProvider {
      * @memberof TicketMaster
      */
     protected id = 'eventbrite'
-
-    /**
-     *
-     *
-     * @protected
-     * @memberof TicketMaster
-     */
-    protected Factory = Factory
 
     /**
      *
@@ -104,7 +96,7 @@ class EventBrite extends BaseProvider {
      */
     protected successHandler (url: URL, response: any): void {
       const events: EventBriteEvent[] = response.events;
-      const collection: Item[] = this.Factory!.collect(events);
+      const collection: Item[] = collect(events);
       this.succeeded.push(...collection);
       super.successHandler(url, response);
     }
