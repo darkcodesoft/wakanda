@@ -1,5 +1,4 @@
 import { Item } from '../interfaces/Event';
-import { connection } from '../storage/connection';
 import { Event } from '../models/Event';
 import { MineJob } from '../models/Job';
 import { send } from '../services/notification';
@@ -192,7 +191,7 @@ export default class BaseProvider {
   public async fetch (): Promise<void> {
     send(this.id! + ' mining started.');
 
-    let n = this.page;
+    let n = 1;
     this.configureUrl();
     this.setPage(n);
 
@@ -227,16 +226,20 @@ export default class BaseProvider {
    */
   protected async store (): Promise<boolean|any> {
     const now = new Date().toISOString();
+
     try {
-      await Event.deleteMany({ source: this.id });
-      const result = await Event.insertMany(this.succeeded, { ordered: false });
-      await MineJob.deleteMany({ mineId: this.id });
-      await new MineJob({ mineId: this.id, count: result.length, timestamp: now }).save();
-      const totalEntries = await Event.estimatedDocumentCount();
-      console.log(`[+] ${this.id} fetch success: ${totalEntries}`);
-      Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }));
-      connection.close();
-      send(this.id + ' mining success total entries: ' + totalEntries);
+      const reset = await Event.deleteMany({ source: this.id });
+
+      if (reset.ok === 1) {
+        const result = await Event.insertMany(this.succeeded, { ordered: false });
+        this.succeeded = [];
+        await MineJob.deleteMany({ mineId: this.id });
+        await new MineJob({ mineId: this.id, count: result.length, timestamp: now }).save();
+        const totalEntries = await Event.estimatedDocumentCount();
+        console.log(`[+] ${this.id} fetch success: ${totalEntries}`);
+        Socket.static().send(JSON.stringify({ message: 'PROVIDER_SUCCESS', provider: this.id, count: result.length }));
+        send(this.id + ' mining success total entries: ' + totalEntries);
+      }
     } catch (e) {
       send(this.id + ' mining error at : ' + now);
       console.log(e);
