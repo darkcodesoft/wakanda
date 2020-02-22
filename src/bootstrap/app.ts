@@ -1,4 +1,5 @@
 import Server from '../../public/server';
+import Task from '../../public/task';
 import express from 'express';
 import createError, { HttpError } from 'http-errors';
 import { jsonHttpError } from '../lib/http';
@@ -21,6 +22,11 @@ export default class App {
   public server:Server
 
   /**
+   * Task object
+   */
+  public task:Task
+
+  /**
    *
    *
    * @static
@@ -40,6 +46,7 @@ export default class App {
    */
   constructor () {
     this.server = Server.static();
+    this.task = Task.static();
     this.setupDefaultApplicationRoutes();
   }
 
@@ -75,8 +82,7 @@ export default class App {
    */
   public start (): boolean {
     try {
-      this.server.start();
-      return true;
+      return this.task.start() && this.server.start();
     } catch (error) {
       console.log(error);
       return false;
