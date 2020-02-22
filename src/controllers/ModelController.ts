@@ -37,6 +37,7 @@ export default class ModelController {
       if (options.fields) options.fields = parseFields(options.fields);
       if (options.limit) options.limit = parseInt(options.limit);
       if (options.page) options.page = parseInt(options.page);
+      if (options.skip) options.skip = parseInt(options.skip);
 
       const collection = await this.Service!.find(options);
       return this.response(res, collection);

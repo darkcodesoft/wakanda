@@ -88,7 +88,7 @@ export default class ModelService implements ModelServiceInterface {
       const limit = options.limit || this.baseLimit;
       const page = options.page || this.basePage;
       const sort = options.sort || this.baseSort;
-      const skip = limit * (page - 1);
+      const skip = options.skip || limit * (page - 1);
       const search = options.search ? options.search.toString() : undefined;
 
       if (search) {
