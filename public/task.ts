@@ -18,8 +18,8 @@ export default class Task {
    *
    *
    * @static
-   * @returns {App}
-   * @memberof App
+   * @returns {Task}
+   * @memberof Task
    */
   public static static (): Task {
     if (Task.instance === null) {
@@ -29,7 +29,7 @@ export default class Task {
   }
 
   /**
-   * Application init method
+   * Task init method
    *
    * @returns boolean
    * @memberof App
@@ -44,10 +44,10 @@ export default class Task {
         if (parseInt(process.env.pm_id) % os.cpus().length !== 0) {
           console.log('[-] in workder cluster.');
         } else {
-          const job = new CronJob('*/2 * * * *', () => { // every 2 minutes
-          // const job = new CronJob('0 */12 * * *', () => { // every 12 hours
+          // const job = new CronJob('*/2 * * * *', () => { // every 2 minutes
+          const job = new CronJob('0 */12 * * *', () => { // every 12 hours
             TicketMaster.fetch();
-            //  spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')]);
+            // spawn(join(process.cwd(), 'node_modules/ts-node/dist/bin.js'), [join(process.cwd(), 'src/providers/index.ts')]);
             const now = new Date().toISOString();
             console.log('[+] automatic mining job started at ' + now);
           }, undefined, true, 'America/New_York');
